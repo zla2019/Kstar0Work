@@ -124,7 +124,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   //    *pol_file = TFile::Open("Kstar0_20210823_embedding.root");
   TFile *pol_file =
       TFile::Open("../../Kstar0_20210824_RealData_TPCandTOF.root");
-  TFile *efficiency = TFile::Open("../../KstarEfficiency.root");
+  TFile *efficiency = TFile::Open("../../KstarEfficiency_binning1.root");
   TFile *efficiency_bigRange =
       TFile::Open("../../KstarEfficiency_bigBinning.root");
   TFile *efficiency_fow_mid = TFile::Open("../../KstarEfficiency_fow_mid.root");

@@ -1,15 +1,15 @@
 #include <iostream>
 
 void getEfficiency() {
-  static const int nPtBin = 4;
-  static const int nEtaBin = 5;
+  static const int nPtBin = 6;
+  static const int nEtaBin = 10;
   static const int nTotEtaBin = 7;
-  const float ptBinBoundary[nPtBin + 1] = {0.4, 0.8, 1.2, 1.6, 2.0};
-  const float etaBinBoundary[nEtaBin + 1] = {-0.8, -0.6, -0.4, -0.2, 0, 0.2};
+  const float ptBinBoundary[nPtBin + 1] = {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0};
+  const float etaBinBoundary[nEtaBin + 1] = {-0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0, 0.1, 0.2};
 
   TFile *fRec = TFile::Open("../../ReconstructionKstarInfo_v1.root");
   TFile *fMC = TFile::Open("../../InputKstarInfo_v1.root");
-  TFile *fEfficiency = new TFile("../../KstarEfficiency_test.root", "RECREATE");
+  TFile *fEfficiency = new TFile("../../KstarEfficiency_binning6.root", "RECREATE");
 
   TH2F *hRecAcc[4];
   TH2F *hMCAcc[4];
@@ -19,11 +19,16 @@ void getEfficiency() {
     hRecAcc[icent] =
         (TH2F *)fRec->Get(Form("hKstar0RapidityvsPt_cent%i", icent));
     hMCAcc[icent] = (TH2F *)fMC->Get(Form("hKstarAcc_cent%i", icent));
+/*
     hEfficiency[icent] =
         new TH2F(Form("Efficiency_cent%i", icent), "Efficiency", nEtaBin,
                  etaBinBoundary[0], etaBinBoundary[nEtaBin], nPtBin,
                  ptBinBoundary[0], ptBinBoundary[nPtBin]);
-
+*/
+    hEfficiency[icent] =
+        new TH2F(Form("Efficiency_cent%i", icent), "Efficiency", nEtaBin,
+                 etaBinBoundary, nPtBin, ptBinBoundary);
+	
     for (int ieta = 0; ieta < nEtaBin; ++ieta) {
       for (int ipt = 0; ipt < nPtBin; ++ipt) {
         int integralXLimit[2] = {hMCAcc[icent]->ProjectionX()->FindBin(
