@@ -49,19 +49,19 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
     
     const int nCentFlow = 4;
     TString centName[] = {"0-10%", "10-40%", "40-60%", "0-80%"};
-    TString etaName[]  = {"-0.8 < y < -0.6", "-0.6 < y < -0.4", "-0.4 < y < -0.2", "-0.2 < y < 0", "0 < y < 0.2"};
+    TString etaName[]  = {"-0.9 < y < -0.6", "-0.6 < y < -0.3", "-0.3 < y < 0", "0 < y < 0.3"};
     TString etaNameFow[]  = {"-1.0 < y < -0.8"}; // used at begining
     TString etaNameMid[]  = {"-0.2 < y < 0.2"};
     
     // combined rap bin
-    TString etaNameTot[]  = {"-1.0 < y < -0.8", "-0.8 < y < -0.6", "-0.6 < y < -0.4", "-0.4 < y < -0.2", "-0.2 < y < 0", "0 < y < 0.2", "-0.2 < y < 0.2"};
-    TString etaNameTotScale[]  = {"-1.0<y<-0.8, x2^{-1}", "-0.8<y<-0.6", "-0.6<y<-0.4, x2", "-0.4<y<-0.2, x2^{2}", "-0.2<y<0,    x2^{3}", "0<y<0.2,    x2^{4}", "-0.2<y<0.2,  x2^{5}"};
+    TString etaNameTot[]  = {"-1.0 < y < -0.8", "-0.9 < y < -0.6", "-0.6 < y < -0.3", "-0.3 < y < 0", "0 < y < 0.3", "-0.2 < y < 0.2"};
+    TString etaNameTotScale[]  = {"-1.0<y<-0.8, x2^{-1}", "-0.9<y<-0.6", "-0.6<y<-0.3, x2", "-0.3<y<0, x2^{2}", "0<y<0.3,    x2^{3}", "-0.2<y<0.2,  x2^{4}"};
     
-    double fctetaXaxis[]    = {-0.8, -0.6, -0.4, -0.2, 0, 0.2};
+    double fctetaXaxis[]    = {-0.9, -0.6, -0.3, 0, 0.3};
     double fctetaXaxisFow[] = {-1.0, -0.8};
     double fctetaXaxisMid[] = {-0.2, 0.2};
     
-    float rapiditywidth = 0.2;
+    float rapiditywidth = 0.3;
     float rapiditywidthFow = 0.2;
     float rapiditywidthMid = 0.4;
     
@@ -71,7 +71,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
     double fctpTFowXaxis[nPtFow+1] = {0.4, 0.9, 1.4, 2.0};
     
     //-0.8 < y < 0.2
-    const int nEta = 5;
+    const int nEta = 4;
     const int nPt = 4;
     double fctpTXaxis[nEta][nPt+1] = {
         //{0.4, 0.6, 0.9, 1.2, 1.5, 2.0},
@@ -79,7 +79,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
         {0.4, 0.8, 1.2, 1.6, 2.0},
         {0.4, 0.8, 1.2, 1.6, 2.0},
         {0.4, 0.8, 1.2, 1.6, 2.0},
-        {0.4, 0.8, 1.2, 1.6, 2.0} // 0, 0.2
+//        {0.4, 0.8, 1.2, 1.6, 2.0} // 0, 0.2
     };
     
     const int nPtMid = 4;
@@ -87,17 +87,16 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
     //double fctpTMidXaxis[nPtMid+1] = {0.4, 0.7, 1.0, 1.3, 1.6, 2.0};
     
     // nTotEta begin to include all !!!
-    const int nTotEta = 7;
+    const int nTotEta = 6;
     //float scaler4Show[nTotEta] = {0.5, 1., 2., 4., 8., 16., 32}; //scale for clarity
-    float scaler4Show[nTotEta] = {1., 1., 1., 1., 1., 1., 1}; //scale for clarity
+    float scaler4Show[nTotEta] = {1., 1., 1., 1., 1., 1}; //scale for clarity
     const Double_t RapiditypTLow[nTotEta][nCentFlow] =
     {
         {0.4, 0.4, 0.4}, //-1.0, -0.8
-        {0.4, 0.4, 0.4}, //-0.8, -0.6
-        {0.4, 0.4, 0.4}, //-0.6, -0.4
-        {0.4, 0.4, 0.4}, //-0.4, -0.2
-        {0.4, 0.4, 0.4}, //-0.2, 0
-        {0.4, 0.4, 0.4}, // 0, 0.2
+        {0.4, 0.4, 0.4}, //-0.9, -0.6
+        {0.4, 0.4, 0.4}, //-0.6, -0.3
+        {0.4, 0.4, 0.4}, //-0.3, -0.0
+        {0.4, 0.4, 0.4}, // 0, 0.3
         {0.4, 0.4, 0.4} // -0.2, 0.2
     };
     const Double_t RapiditypTHigh[nTotEta][nCentFlow] =
@@ -108,7 +107,6 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
         {2.0, 2.0, 2.0},
         {2.0, 2.0, 2.0},
         {2.0, 2.0, 2.0},
-        {2.0, 2.0, 2.0}
     };
     //==================================================================
     // centrality
@@ -765,8 +763,8 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
                 
                 //eff_weight = hEff_accReg_we[ieta][icent]->GetBinContent(ipt+1);
                 //if(eff_weight!=0)  eff_weight = 1./eff_weight;
-//                eff_weight = 1.0;
-		eff_weight = 1./EfficiencyBigRange[icent]->GetBinContent(ieta + 1, ipt + 1);
+                eff_weight = 1.0;
+//		eff_weight = 1./EfficiencyBigRange[icent]->GetBinContent(ieta + 1, ipt + 1);
                 
                 nXiYield[icent][ieta][ipt] = nSignal*eff_weight;
                 nXiYieldErr[icent][ieta][ipt] = nSignalErr*eff_weight; //sqrt(nSignal);
@@ -954,8 +952,8 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
             
             //eff_weight = hEff_accReg_we_fow[icent]->GetBinContent(ipt+1);
             //if(eff_weight !=0) eff_weight = 1./ eff_weight;
-//            eff_weight = 1.;
-		eff_weight = 1./EfficiencyFow[icent]->GetBinContent(1, ipt + 1);
+            eff_weight = 1.;
+//		eff_weight = 1./EfficiencyFow[icent]->GetBinContent(1, ipt + 1);
             
             nXiYieldFow[icent][ipt] = nSignal*eff_weight;
             nXiYieldErrFow[icent][ipt] = nSignalErr*eff_weight; //sqrt(nSignal);
@@ -1143,8 +1141,8 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
             
             //eff_weight = hEff_accReg_we_mid[icent]->GetBinContent(ipt+1);
             //if(eff_weight !=0) eff_weight = 1./ eff_weight;
-//            eff_weight = 1.0;
-		eff_weight = 1./EfficiencyMid[icent]->GetBinContent(1, ipt + 1);
+            eff_weight = 1.0;
+//		eff_weight = 1./EfficiencyMid[icent]->GetBinContent(1, ipt + 1);
             
             nXiYieldMid[icent][ipt] = nSignal*eff_weight;
             nXiYieldErrMid[icent][ipt] = nSignalErr*eff_weight; //sqrt(nSignal);
@@ -1776,8 +1774,8 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
     
     for(int icent=0; icent<nCentFlow; icent++){
         //    hXidNdy[icent] = new TH1F(Form("hXidNdy_icent%d", icent), "", 5, -0.8, 0.2);
-        hXidNdy[icent] = new TH1F(Form("hXidNdy_icent%d", icent), "", 8, -0.8, 0.8);
-        hXidNdy_rf[icent] = new TH1F(Form("hXidNdy_rf_icent%d", icent), "", 4, 0, 0.8);
+        hXidNdy[icent] = new TH1F(Form("hXidNdy_icent%d", icent), "", 6, -0.9, 0.9);
+        hXidNdy_rf[icent] = new TH1F(Form("hXidNdy_rf_icent%d", icent), "", 3, 0, 0.9);
         hXidNdy_Mid[icent] = new TH1F(Form("hXidNdy_Mid_icent%d", icent), "", 1, fctetaXaxisMid);
     }
     
@@ -1786,14 +1784,16 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
         //      hXidNdy[icent]->SetBinContent(ieta+1, xiYield_int[icent][ieta]);
         //      hXidNdy[icent]->SetBinError(ieta+1, xiYieldErr_int[icent][ieta]);
         //    }
-        for(int ieta=0; ieta<4; ieta++) {
+        for(int ieta=0; ieta<3; ieta++) {
             hXidNdy[icent]->SetBinContent(ieta+1, xiYield_int[icent][ieta + 1]);
-//		std::cout << "zla check icent == " << icent << " ieta == " << ieta << " yield == " << xiYield_int[icent][ieta] << std::endl;
+		if(debug) {
+			std::cout << "zla check icent == " << icent << " ieta == " << ieta << " yield == " << xiYield_int[icent][ieta] << std::endl;
+		}
             hXidNdy[icent]->SetBinError(ieta+1, xiYieldErr_int[icent][ieta + 1]);
         }
-        for(int ieta=0; ieta<4; ieta++) {
-            hXidNdy_rf[icent]->SetBinContent(ieta+1, xiYield_int[icent][3 - ieta + 1]);
-            hXidNdy_rf[icent]->SetBinError(ieta+1, xiYieldErr_int[icent][3 - ieta + 1]);
+        for(int ieta=0; ieta<3; ieta++) {
+            hXidNdy_rf[icent]->SetBinContent(ieta+1, xiYield_int[icent][2 - ieta + 1]);
+            hXidNdy_rf[icent]->SetBinError(ieta+1, xiYieldErr_int[icent][2 - ieta + 1]);
             
             //hXidNdy[icent]->SetBinContent(ieta+5, xiYield_int[icent][3-ieta]);
             //hXidNdy[icent]->SetBinError(ieta+5, xiYieldErr_int[icent][3-ieta]);
@@ -1808,7 +1808,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
     for(int icent=0; icent<nCentFlow; icent++){
         ca->cd(icent+1)->SetGridy();
         
-        ax = gPad->DrawFrame( -1.0, 0, 1.0, hXidNdy[icent]->GetBinContent(4)*1.7);
+        ax = gPad->DrawFrame( -1.0, 0, 1.0, hXidNdy[icent]->GetBinContent(3)*1.7);
         SetAxis( ax, 1, 1 );
         ax->SetYTitle("K^{*0} dN/dy");
         ax->SetXTitle("y");
@@ -1859,8 +1859,8 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
         leg->SetTextFont(42);
         leg->SetTextSize(0.04);
         leg->SetHeader(Form("K^{*0}, %s Au+Au #sqrt{s_{NN}} = 3 GeV", centName[icent].Data()));
-        leg->AddEntry(hXidNdy[icent], "-0.8 < y < 0 (data)", "lp");
-        leg->AddEntry(hXidNdy_rf[icent], "0 < y < 0.8 (reflection)", "lp");
+        leg->AddEntry(hXidNdy[icent], "-0.9 < y < 0 (data)", "lp");
+        leg->AddEntry(hXidNdy_rf[icent], "0 < y < 0.9 (reflection)", "lp");
         leg->AddEntry(hXidNdy_Mid[icent], Form("%s (data)", etaNameMid[0].Data()), "lp");
         leg->Draw("same");
     }
