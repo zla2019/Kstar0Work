@@ -18,6 +18,7 @@ TGraphErrors* convertToGraph(TH1F* h);
 void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKstar = 0) {
 
 	bool debug = true;
+	bool eff = false;
     
     //0-10%, 10-40%, 40-60%, 0-80%
     
@@ -72,14 +73,14 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
     
     //-0.8 < y < 0.2
     const int nEta = 5;
-    const int nPt = 4;
+    const int nPt = 6;
     double fctpTXaxis[nEta][nPt+1] = {
         //{0.4, 0.6, 0.9, 1.2, 1.5, 2.0},
-        {0.4, 0.8, 1.2, 1.6, 2.0},
-        {0.4, 0.8, 1.2, 1.6, 2.0},
-        {0.4, 0.8, 1.2, 1.6, 2.0},
-        {0.4, 0.8, 1.2, 1.6, 2.0},
-        {0.4, 0.8, 1.2, 1.6, 2.0} // 0, 0.2
+        {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0},
+        {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0},
+        {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0},
+        {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0},
+        {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0} // 0, 0.2
     };
     
     const int nPtMid = 4;
@@ -765,14 +766,17 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
                 
                 //eff_weight = hEff_accReg_we[ieta][icent]->GetBinContent(ipt+1);
                 //if(eff_weight!=0)  eff_weight = 1./eff_weight;
-//                eff_weight = 1.0;
-		eff_weight = 1./EfficiencyBigRange[icent]->GetBinContent(ieta + 1, ipt + 1);
+		if(!eff) {
+	                eff_weight = 1.0;
+		} else {
+			eff_weight = 1./EfficiencyBigRange[icent]->GetBinContent(ieta + 1, ipt + 1);
+		}
                 
                 nXiYield[icent][ieta][ipt] = nSignal*eff_weight;
                 nXiYieldErr[icent][ieta][ipt] = nSignalErr*eff_weight; //sqrt(nSignal);
 		if(icent == 1) {
 			if(debug) {
-				std::cout << "zla ipt == " << ipt << " ieta == " << ieta << " eff_weight == " << EfficiencyBigRange[icent]->GetBinContent(ieta + 1, ipt + 1) << " nsignal == " << nSignal << " yield == " << nXiYield[icent][ieta][ipt] << std::endl;
+				std::cout << "zla ipt == " << ipt << " ieta == " << ieta << " eff_weight == " << eff_weight << " nsignal == " << nSignal << " yield == " << nXiYield[icent][ieta][ipt] << std::endl;
 			}
 		}
                 
@@ -954,8 +958,11 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
             
             //eff_weight = hEff_accReg_we_fow[icent]->GetBinContent(ipt+1);
             //if(eff_weight !=0) eff_weight = 1./ eff_weight;
-//            eff_weight = 1.;
-		eff_weight = 1./EfficiencyFow[icent]->GetBinContent(1, ipt + 1);
+		if(!eff) {
+	            eff_weight = 1.;
+		} else {
+			eff_weight = 1./EfficiencyFow[icent]->GetBinContent(1, ipt + 1);
+		}
             
             nXiYieldFow[icent][ipt] = nSignal*eff_weight;
             nXiYieldErrFow[icent][ipt] = nSignalErr*eff_weight; //sqrt(nSignal);
@@ -1143,8 +1150,11 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
             
             //eff_weight = hEff_accReg_we_mid[icent]->GetBinContent(ipt+1);
             //if(eff_weight !=0) eff_weight = 1./ eff_weight;
-//            eff_weight = 1.0;
-		eff_weight = 1./EfficiencyMid[icent]->GetBinContent(1, ipt + 1);
+		if(!eff) {
+	            eff_weight = 1.0;
+		} else {
+			eff_weight = 1./EfficiencyMid[icent]->GetBinContent(1, ipt + 1);
+		}
             
             nXiYieldMid[icent][ipt] = nSignal*eff_weight;
             nXiYieldErrMid[icent][ipt] = nSignalErr*eff_weight; //sqrt(nSignal);
