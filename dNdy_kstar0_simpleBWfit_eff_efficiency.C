@@ -6,7 +6,7 @@
 #include "TMath.h"
 #include "TStyle.h"
 
-#include "func.h"
+#include "../../func.h"
 
 double IMcut[2] = { 0.75, 1.05}; //K*0 mass from PDG = 895.94 +- 0.22 [MeV/c2], width 48.7 +- 0.8 MeV
 int colorIndex[] = {1, 2, 3, 4, 6, 7, 8};
@@ -116,10 +116,10 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
 //    TFile *pol_file = TFile::Open("19154032_5000010_kstar0Tree_TPCorTOF_hist_Aug12.root");
 //    TFile *pol_file = TFile::Open("1.6MMuDataTree_New_TPCorTOF_hist_Aug12.root");
 //    TFile *pol_file = TFile::Open("Kstar0_20210823_embedding.root");
-    TFile *pol_file = TFile::Open("Kstar0_20210824_RealData_TPCandTOF.root");
-	TFile *efficiency = TFile::Open("KstarEfficiency.root");
-	TFile *efficiency_bigRange = TFile::Open("KstarEfficiency_bigBinning.root");
-	TFile *efficiency_fow_mid = TFile::Open("KstarEfficiency_fow_mid.root");
+    TFile *pol_file = TFile::Open("../../Kstar0_20210824_RealData_TPCandTOF.root");
+	TFile *efficiency = TFile::Open("../../KstarEfficiency.root");
+	TFile *efficiency_bigRange = TFile::Open("../../KstarEfficiency_bigBinning.root");
+	TFile *efficiency_fow_mid = TFile::Open("../../KstarEfficiency_fow_mid.root");
 	TH2F *Efficiency[4];
 	TH2F *EfficiencyBigRange[4];
 	TH2F *EfficiencyFow[4];
