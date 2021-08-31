@@ -166,7 +166,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
     if(isAntiKstar == 1) { histName = "NumAntiKstar0InvMassvsPtY"; particleName = "antiKstar0";}
     //if(ksigma == 4) cutName = "nsigma_2";
     
-    system(Form("mkdir -p files/plots_%s", cutName.Data()));
+    system(Form("mkdir -p ../../files/plots_%s", cutName.Data()));
     //==========================================================================================================================================
     // get historgram
     TH3F* h3InvMassXiYvsPt_tot[nCentFlow]; //0-10%, 10-40%, 40-60%, 0-80%
@@ -292,7 +292,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
         ca_acceptance->cd(icent+1)->SetLogz();
 //	Efficiency[icent]->GetXaxis()->SetRangeUser(-1.0, 0.4);
 //	Efficiency[icent]->GetYaxis()->SetRangeUser(0, 3.0);
-	h2XiYvsPt_tot[icent]->Divide(Efficiency[icent]);
+//	h2XiYvsPt_tot[icent]->Divide(Efficiency[icent]);
         h2XiYvsPt_tot[icent]->Draw("COLZ");
         h2XiYvsPt_tot[icent]->GetXaxis()->SetRangeUser(-1.0, 0.4);
         h2XiYvsPt_tot[icent]->GetYaxis()->SetRangeUser(0, 3.0);
@@ -303,8 +303,8 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
 	Efficiency[icent]->GetYaxis()->SetRangeUser(0, 3.0);
 	Efficiency[icent]->Draw("COLZ");
     }
-    ca_acceptance->Print(Form("files/plots_%s/acceptance_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
-    efficiencyCheck->Print(Form("files/plots_%s/efficency_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
+    ca_acceptance->Print(Form("../../files/plots_%s/acceptance_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
+    efficiencyCheck->Print(Form("../../files/plots_%s/efficency_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
 //    return;
     //==========================================================================================================================================
     // extract Xi signal
@@ -804,7 +804,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
             }
             
             ca_invMass[icent][ieta]->cd();
-            ca_invMass[icent][ieta]->Print(Form("files/plots_%s/invMassVsYCent%d_dNdY%d_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), icent, ieta, particleName.Data(), cutName.Data()));
+            ca_invMass[icent][ieta]->Print(Form("../../files/plots_%s/invMassVsYCent%d_dNdY%d_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), icent, ieta, particleName.Data(), cutName.Data()));
         }
     }
     //==========================================================================================================================================
@@ -992,7 +992,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
         }
         
         ca_invMassFow[icent]->cd();
-        ca_invMassFow[icent]->Print(Form("files/plots_%s/invMassVsYCent%d_dNdYFow_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), icent, particleName.Data(), cutName.Data()));
+        ca_invMassFow[icent]->Print(Form("../../files/plots_%s/invMassVsYCent%d_dNdYFow_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), icent, particleName.Data(), cutName.Data()));
     }
     //==========================================================================================================================================
     
@@ -1181,7 +1181,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
         }
         
         ca_invMassMid[icent]->cd();
-        ca_invMassMid[icent]->Print(Form("files/plots_%s/invMassVsYCent%d_dNdYmid_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), icent, particleName.Data(), cutName.Data()));
+        ca_invMassMid[icent]->Print(Form("../../files/plots_%s/invMassVsYCent%d_dNdYmid_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), icent, particleName.Data(), cutName.Data()));
     }
     
     //==========================================================================================================================================
@@ -1476,7 +1476,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
         legT->Draw("same");
     }
     ca_dNdpTdy->cd();
-    ca_dNdpTdy->Print(Form("files/plots_%s/dNdpTdy_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
+    ca_dNdpTdy->Print(Form("../../files/plots_%s/dNdpTdy_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
     //================================================================================================
     // fit to dNdpT, to check if it's consistent with fitting to dNdpTdy !!!
     
@@ -1573,7 +1573,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
     }
     
     ca_dNdpT->cd();
-    ca_dNdpT->Print(Form("files/plots_%s/dNdpT_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
+    ca_dNdpT->Print(Form("../../files/plots_%s/dNdpT_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
     //=================================================================================================================
     
     TCanvas *ca_dNdy = new TCanvas("ca_dNdy", "K^{*0} dNdy", 450*nCentFlow, 800);
@@ -1668,7 +1668,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
     }
     
     ca_dNdy->cd();
-    ca_dNdy->Print(Form("files/plots_%s/dNdmT_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
+    ca_dNdy->Print(Form("../../files/plots_%s/dNdmT_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
     //================================================================================================
     //Temperature vs rapidity
     
@@ -1765,7 +1765,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
         legTcent->Draw("same");
     }
     ca_T->cd();
-    ca_T->Print(Form("files/plots_%s/dTdY_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
+    ca_T->Print(Form("../../files/plots_%s/dTdY_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
     
     //================================================================================================
     // dN/dy plots
@@ -1865,12 +1865,12 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName="Mix", int isAntiKst
         leg->Draw("same");
     }
     ca->cd();
-    ca->Print(Form("files/plots_%s/dNdY_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
+    ca->Print(Form("../../files/plots_%s/dNdY_%s_%s_EPmethod_fxt3GeV.png", cutName.Data(), particleName.Data(), cutName.Data()));
     
     
     
     //================================================================================================
-    auto fs = new TFile(Form("files/%s.root", cutName.Data()), "RECREATE");
+    auto fs = new TFile(Form("../../files/%s.root", cutName.Data()), "RECREATE");
     fs->cd();
     
     // dN/dpT/dy
