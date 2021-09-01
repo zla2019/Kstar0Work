@@ -141,7 +141,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
       TFile::Open("../../Kstar0_20210824_RealData_TPCandTOF.root");
   TFile *efficiency = TFile::Open("../../KstarEfficiency.root");
   TFile *efficiency_bigRange =
-      TFile::Open("../../KstarEfficiency_bigBinning.root");
+      TFile::Open("../../KstarEfficiency_binning6.root");
   TFile *efficiency_fow_mid = TFile::Open("../../KstarEfficiency_fow_mid.root");
   TH2F *Efficiency[4];
   TH2F *EfficiencyBigRange[4];
@@ -992,9 +992,9 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
 
         // eff_weight = hEff_accReg_we[ieta][icent]->GetBinContent(ipt+1);
         // if(eff_weight!=0)  eff_weight = 1./eff_weight;
-        eff_weight = 1.0;
-        //		eff_weight
-        //= 1./EfficiencyBigRange[icent]->GetBinContent(ieta + 1, ipt + 1);
+        //        eff_weight = 1.0;
+        eff_weight =
+            1. / EfficiencyBigRange[icent]->GetBinContent(ieta + 1, ipt + 1);
 
         nXiYield[icent][ieta][ipt] = nSignal * eff_weight;
         nXiYieldErr[icent][ieta][ipt] =
@@ -1237,9 +1237,8 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
 
       // eff_weight = hEff_accReg_we_fow[icent]->GetBinContent(ipt+1);
       // if(eff_weight !=0) eff_weight = 1./ eff_weight;
-      eff_weight = 1.;
-      //		eff_weight = 1./EfficiencyFow[icent]->GetBinContent(1,
-      //ipt + 1);
+      //      eff_weight = 1.;
+      eff_weight = 1. / EfficiencyFow[icent]->GetBinContent(1, ipt + 1);
 
       nXiYieldFow[icent][ipt] = nSignal * eff_weight;
       nXiYieldErrFow[icent][ipt] = nSignalErr * eff_weight; // sqrt(nSignal);
@@ -1479,9 +1478,8 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
 
       // eff_weight = hEff_accReg_we_mid[icent]->GetBinContent(ipt+1);
       // if(eff_weight !=0) eff_weight = 1./ eff_weight;
-      eff_weight = 1.0;
-      //		eff_weight = 1./EfficiencyMid[icent]->GetBinContent(1,
-      //ipt + 1);
+      //      eff_weight = 1.0;
+      eff_weight = 1. / EfficiencyMid[icent]->GetBinContent(1, ipt + 1);
 
       nXiYieldMid[icent][ipt] = nSignal * eff_weight;
       nXiYieldErrMid[icent][ipt] = nSignalErr * eff_weight; // sqrt(nSignal);
