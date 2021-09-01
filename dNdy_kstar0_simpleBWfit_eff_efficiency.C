@@ -21,7 +21,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
                                             int isAntiKstar = 0) {
 
   bool debug = true;
-  bool eff = false;
+  bool eff = true;
 
   // 0-10%, 10-40%, 40-60%, 0-80%
 
@@ -53,26 +53,26 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
 
   const int nCentFlow = 4;
   TString centName[] = {"0-10%", "10-40%", "40-60%", "0-80%"};
-  TString etaName[] = {"-0.8 < y < -0.6", "-0.6 < y < -0.4", "-0.4 < y < -0.2",
-                       "-0.2 < y < 0", "0 < y < 0.2"};
+  TString etaName[] = {"-0.9 < y < -0.75", "-0.75 < y < -0.6", "-0.6 < y < -0.45",
+                       "-0.45 < y < -0.3", "-0.3 < y < -0.15", "-0.15 < y < 0", "0 < y < 0.15", "0.15 < y < 0.3"};
   TString etaNameFow[] = {"-1.0 < y < -0.8"}; // used at begining
   TString etaNameMid[] = {"-0.2 < y < 0.2"};
 
   // combined rap bin
-  TString etaNameTot[] = {"-1.0 < y < -0.8", "-0.8 < y < -0.6",
-                          "-0.6 < y < -0.4", "-0.4 < y < -0.2",
-                          "-0.2 < y < 0",    "0 < y < 0.2",
+  TString etaNameTot[] = {"-1.0 < y < -0.8", "-0.9 < y < -0.75",
+                          "-0.75 < y < -0.6", "-0.6 < y < -0.45",
+                          "-0.45 < y < -0.3",    "-0.3 < y < -0.15", "-0.15 < y < 0", "0 < y < 0.15", "0.15 < y < 0.3",
                           "-0.2 < y < 0.2"};
-  TString etaNameTotScale[] = {"-1.0<y<-0.8, x2^{-1}", "-0.8<y<-0.6",
-                               "-0.6<y<-0.4, x2",      "-0.4<y<-0.2, x2^{2}",
-                               "-0.2<y<0,    x2^{3}",  "0<y<0.2,    x2^{4}",
-                               "-0.2<y<0.2,  x2^{5}"};
+  TString etaNameTotScale[] = {"-1.0<y<-0.8, x2^{-1}", "-0.9<y<-0.75",
+                               "-0.75<y<-0.6, x2",      "-0.6<y<-0.45, x2^{2}",
+                               "-0.45<y<-0.3,    x2^{3}",  "-0.3<y<-0.15,    x2^{4}", "-0.15<y<0, x2^{5}", "0<y<0.15, x2^{6}", "0.15<y<0.3, x2^{7}",
+                               "-0.2<y<0.2,  x2^{8}"};
 
-  double fctetaXaxis[] = {-0.8, -0.6, -0.4, -0.2, 0, 0.2};
+  double fctetaXaxis[] = {-0.9, -0.75, -0.6, -0.45, -0.3, -0.15, 0, 0.15, 0.3};
   double fctetaXaxisFow[] = {-1.0, -0.8};
   double fctetaXaxisMid[] = {-0.2, 0.2};
 
-  float rapiditywidth = 0.2;
+  float rapiditywidth = 0.15;
   float rapiditywidthFow = 0.2;
   float rapiditywidthMid = 0.4;
 
@@ -82,7 +82,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   double fctpTFowXaxis[nPtFow + 1] = {0.4, 0.9, 1.4, 2.0};
 
   //-0.8 < y < 0.2
-  const int nEta = 5;
+  const int nEta = 8;
   const int nPt = 4;
   double fctpTXaxis[nEta][nPt + 1] = {
       //{0.4, 0.6, 0.9, 1.2, 1.5, 2.0},
@@ -90,7 +90,10 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
       {0.4, 0.8, 1.2, 1.6, 2.0},
       {0.4, 0.8, 1.2, 1.6, 2.0},
       {0.4, 0.8, 1.2, 1.6, 2.0},
-      {0.4, 0.8, 1.2, 1.6, 2.0} // 0, 0.2
+      {0.4, 0.8, 1.2, 1.6, 2.0},
+      {0.4, 0.8, 1.2, 1.6, 2.0},
+      {0.4, 0.8, 1.2, 1.6, 2.0},
+      {0.4, 0.8, 1.2, 1.6, 2.0}
   };
 
   const int nPtMid = 4;
@@ -98,22 +101,26 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   // double fctpTMidXaxis[nPtMid+1] = {0.4, 0.7, 1.0, 1.3, 1.6, 2.0};
 
   // nTotEta begin to include all !!!
-  const int nTotEta = 7;
+  const int nTotEta = 10;
   // float scaler4Show[nTotEta] = {0.5, 1., 2., 4., 8., 16., 32}; //scale for
   // clarity
-  float scaler4Show[nTotEta] = {1., 1., 1., 1., 1., 1., 1}; // scale for clarity
+  float scaler4Show[nTotEta] = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1.}; // scale for clarity
   const Double_t RapiditypTLow[nTotEta][nCentFlow] = {
       {0.4, 0.4, 0.4}, //-1.0, -0.8
-      {0.4, 0.4, 0.4}, //-0.8, -0.6
-      {0.4, 0.4, 0.4}, //-0.6, -0.4
-      {0.4, 0.4, 0.4}, //-0.4, -0.2
-      {0.4, 0.4, 0.4}, //-0.2, 0
-      {0.4, 0.4, 0.4}, // 0, 0.2
+      {0.4, 0.4, 0.4}, //-0.9, -0.75
+      {0.4, 0.4, 0.4}, //-0.75, -0.6
+      {0.4, 0.4, 0.4}, //-0.6, -0.45
+      {0.4, 0.4, 0.4}, //-0.45, -0.3
+      {0.4, 0.4, 0.4}, //-0.3, -0.15
+      {0.4, 0.4, 0.4}, //-0.15, 0
+      {0.4, 0.4, 0.4}, // 0, 0.15
+      {0.4, 0.4, 0.4}, // 0.15, 0.3
       {0.4, 0.4, 0.4}  // -0.2, 0.2
   };
   const Double_t RapiditypTHigh[nTotEta][nCentFlow] = {
       {2.0, 2.0, 2.0}, {2.0, 2.0, 2.0}, {2.0, 2.0, 2.0}, {2.0, 2.0, 2.0},
-      {2.0, 2.0, 2.0}, {2.0, 2.0, 2.0}, {2.0, 2.0, 2.0}};
+      {2.0, 2.0, 2.0}, {2.0, 2.0, 2.0}, {2.0, 2.0, 2.0}, {2.0, 2.0, 2.0},
+	{2.0, 2.0, 2.0}, {2.0, 2.0, 2.0}};
   //==================================================================
   // centrality
   //    TFile *pol_file =
@@ -124,10 +131,10 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   //    TFile::Open("1.6MMuDataTree_New_TPCorTOF_hist_Aug12.root"); TFile
   //    *pol_file = TFile::Open("Kstar0_20210823_embedding.root");
   TFile *pol_file =
-      TFile::Open("../../Kstar0_20210824_RealData_TPCandTOF.root");
+      TFile::Open("../../Kstar0_realData_binning1_20210901.root");
   TFile *efficiency = TFile::Open("../../KstarEfficiency.root");
   TFile *efficiency_bigRange =
-      TFile::Open("../../KstarEfficiency_binning1.root");
+      TFile::Open("../../KstarEfficiency_binning7.root");
   TFile *efficiency_fow_mid = TFile::Open("../../KstarEfficiency_fow_mid.root");
   TH2F *Efficiency[4];
   TH2F *EfficiencyBigRange[4];
@@ -2260,7 +2267,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   ca_T->Divide(nCentFlow, 1);
   for (int icent = 0; icent < nCentFlow; icent++) {
     ca_T->cd(icent + 1);
-    ax = gPad->DrawFrame(-1.0, 0, 1.0, hdTdy[icent]->GetBinContent(4) * 1.7);
+    ax = gPad->DrawFrame(-1.0, 0, 1.0, hdTdy[icent]->GetBinContent(6) * 1.7);
     SetAxis(ax, 1, 1);
     ax->SetYTitle("T [GeV]");
     ax->SetXTitle("y");
@@ -2323,8 +2330,8 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
     legTcent->SetTextSize(0.04);
     legTcent->SetHeader(
         Form("K^{*0}, %s Au+Au #sqrt{s_{NN}} = 3 GeV", centName[icent].Data()));
-    legTcent->AddEntry(hdTdy[icent], "-0.8 < y < 0.2 (data)", "lp");
-    legTcent->AddEntry(hdTdy_rf[icent], "0 < y < 0.8 (reflection)", "lp");
+    legTcent->AddEntry(hdTdy[icent], "-0.9 < y < 0.3 (data)", "lp");
+    legTcent->AddEntry(hdTdy_rf[icent], "0 < y < 0.9 (reflection)", "lp");
     legTcent->AddEntry(f1_coshy_cent[icent], "CosH(y) Fit: T_{eff}/cosh(y)",
                        "lp");
     legTcent->AddEntry(hdTdy_Mid[icent],
@@ -2345,9 +2352,9 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   for (int icent = 0; icent < nCentFlow; icent++) {
     //    hXidNdy[icent] = new TH1F(Form("hXidNdy_icent%d", icent), "", 5, -0.8,
     //    0.2);
-    hXidNdy[icent] = new TH1F(Form("hXidNdy_icent%d", icent), "", 8, -0.8, 0.8);
+    hXidNdy[icent] = new TH1F(Form("hXidNdy_icent%d", icent), "", 12, -0.9, 0.9);
     hXidNdy_rf[icent] =
-        new TH1F(Form("hXidNdy_rf_icent%d", icent), "", 4, 0, 0.8);
+        new TH1F(Form("hXidNdy_rf_icent%d", icent), "", 6, 0, 0.9);
     hXidNdy_Mid[icent] =
         new TH1F(Form("hXidNdy_Mid_icent%d", icent), "", 1, fctetaXaxisMid);
   }
@@ -2357,17 +2364,17 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
     //      hXidNdy[icent]->SetBinContent(ieta+1, xiYield_int[icent][ieta]);
     //      hXidNdy[icent]->SetBinError(ieta+1, xiYieldErr_int[icent][ieta]);
     //    }
-    for (int ieta = 0; ieta < 4; ieta++) {
+    for (int ieta = 0; ieta < 6; ieta++) {
       hXidNdy[icent]->SetBinContent(ieta + 1, xiYield_int[icent][ieta + 1]);
       //		std::cout << "zla check icent == " << icent << " ieta ==
       //" << ieta << " yield == " << xiYield_int[icent][ieta] << std::endl;
       hXidNdy[icent]->SetBinError(ieta + 1, xiYieldErr_int[icent][ieta + 1]);
     }
-    for (int ieta = 0; ieta < 4; ieta++) {
+    for (int ieta = 0; ieta < 6; ieta++) {
       hXidNdy_rf[icent]->SetBinContent(ieta + 1,
-                                       xiYield_int[icent][3 - ieta + 1]);
+                                       xiYield_int[icent][5 - ieta + 1]);
       hXidNdy_rf[icent]->SetBinError(ieta + 1,
-                                     xiYieldErr_int[icent][3 - ieta + 1]);
+                                     xiYieldErr_int[icent][5 - ieta + 1]);
 
       // hXidNdy[icent]->SetBinContent(ieta+5, xiYield_int[icent][3-ieta]);
       // hXidNdy[icent]->SetBinError(ieta+5, xiYieldErr_int[icent][3-ieta]);
