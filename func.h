@@ -4,7 +4,7 @@
 #include "TMinuit.h"
 using namespace TMath;
 
-float ximass = 0.497611;
+float ximass = 0.89594;
 
 
 TLatex* drawLatex(Double_t x, Double_t y, char* text, Int_t textFont, Double_t textSize, Int_t colorIndex)
@@ -87,7 +87,7 @@ double fitFuncbw(Double_t *x,Double_t *par) //bw + pol2
 
 double fitFuncExp(Double_t *x,Double_t *par) //mT exponential
 {
-  Double_t fitdNdy = par[0]*exp(-(sqrt(x[0]*x[0] + 0.497611*0.497611)-0.497611)/par[1])*x[0];
+  Double_t fitdNdy = par[0]*exp(-(sqrt(x[0]*x[0] + 0.892*0.892)-0.892)/par[1])*x[0];
 //  Double_t fitdNdy = par[0]*exp(-x[0]/par[1]);
   return fitdNdy;
 }
@@ -656,6 +656,30 @@ Double_t BGBWPt(const double *x, const double *p)
   fIntBG->FixParameter(4, mass);
   
   double params[5] = {pT, beta, T, n, mass};
+//  return fIntBG->Integral(0., radius, params) * p[3] * x[0];
+  return fIntBG->Integral(0., radius) * p[3] * x[0];
+}
+
+Double_t BGBWMt(const double *x, const double *p)
+{
+  double radius = 1.;
+  double Y = 1;
+  double pi = TMath::Pi();
+  double mT   = x[0];
+  double mass = p[4];
+  double beta = p[0];
+  double T    = p[1];
+  double n    = p[2];
+  
+  TF1 *fIntBG = 0;
+  // if (!fIntBG) fIntBG = new TF1("fIntBG", IntegrandBGBWPt, 0., radius, 5);
+  if (!fIntBG) fIntBG = new TF1("fIntBG", IntegrandBGBW, 0., radius, 5);
+  
+  fIntBG->SetParameters(mT, beta, T, n, mass);
+  fIntBG->FixParameter(0, mT);
+  fIntBG->FixParameter(4, mass);
+  
+  double params[5] = {mT, beta, T, n, mass};
 //  return fIntBG->Integral(0., radius, params) * p[3] * x[0];
   return fIntBG->Integral(0., radius) * p[3] * x[0];
 }
