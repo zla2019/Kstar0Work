@@ -665,7 +665,7 @@ Double_t BGBWMt(const double *x, const double *p)
   double radius = 1.;
   double Y = 1;
   double pi = TMath::Pi();
-  double mT   = sqrt(x[0] * x[0] + 0.89594*0.89594);
+  double mT   = x[0];
   double mass = p[4];
   double beta = p[0];
   double T    = p[1];
