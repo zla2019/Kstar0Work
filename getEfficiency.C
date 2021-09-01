@@ -7,9 +7,9 @@ void getEfficiency() {
   const float ptBinBoundary[nPtBin + 1] = {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0};
   const float etaBinBoundary[nEtaBin + 1] = {-0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0, 0.1, 0.2};
 
-  TFile *fRec = TFile::Open("../../ReconstructionKstarInfo_v1.root");
-  TFile *fMC = TFile::Open("../../InputKstarInfo_v1.root");
-  TFile *fEfficiency = new TFile("../../KstarEfficiency_binning6.root", "RECREATE");
+  TFile *fRec = TFile::Open("../../ReconstructionKstarInfo_v2.root");
+  TFile *fMC = TFile::Open("../../InputKstarInfo_v2.root");
+  TFile *fEfficiency = new TFile("../../KstarEfficiency_test.root", "RECREATE");
 
   TH2F *hRecAcc[4];
   TH2F *hMCAcc[4];
