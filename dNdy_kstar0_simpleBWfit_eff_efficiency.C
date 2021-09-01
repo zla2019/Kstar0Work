@@ -83,14 +83,14 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
 
   //-0.8 < y < 0.2
   const int nEta = 5;
-  const int nPt = 4;
+  const int nPt = 6;
   double fctpTXaxis[nEta][nPt + 1] = {
       //{0.4, 0.6, 0.9, 1.2, 1.5, 2.0},
-      {0.4, 0.8, 1.2, 1.6, 2.0},
-      {0.4, 0.8, 1.2, 1.6, 2.0},
-      {0.4, 0.8, 1.2, 1.6, 2.0},
-      {0.4, 0.8, 1.2, 1.6, 2.0},
-      {0.4, 0.8, 1.2, 1.6, 2.0} // 0, 0.2
+      {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0},
+      {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0},
+      {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0},
+      {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0},
+      {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0} // 0, 0.2
   };
 
   const int nPtMid = 4;
@@ -127,7 +127,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
       TFile::Open("../../Kstar0_realData_binning1_20210901.root");
   TFile *efficiency = TFile::Open("../../KstarEfficiency.root");
   TFile *efficiency_bigRange =
-      TFile::Open("../../KstarEfficiency_binning9.root");
+      TFile::Open("../../KstarEfficiency_binning10.root");
   TFile *efficiency_fow_mid = TFile::Open("../../KstarEfficiency_fow_mid.root");
   TH2F *Efficiency[4];
   TH2F *EfficiencyBigRange[4];
