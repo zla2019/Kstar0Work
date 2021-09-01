@@ -1,15 +1,15 @@
 #include <iostream>
 
 void getEfficiency() {
-  static const int nPtBin = 4;
+  static const int nPtBin = 6;
   static const int nEtaBin = 8;
   static const int nTotEtaBin = 7;
-  const float ptBinBoundary[nPtBin + 1] = {0.4, 0.8, 1.2, 1.6, 2.0};
+  const float ptBinBoundary[nPtBin + 1] = {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0};
   const float etaBinBoundary[nEtaBin + 1] = {-0.9, -0.75, -0.6, -0.45, -0.3, -0.15, 0, 0.15, 0.3};
 
   TFile *fRec = TFile::Open("../../ReconstructionKstarInfo_v2.root");
   TFile *fMC = TFile::Open("../../InputKstarInfo_v2.root");
-  TFile *fEfficiency = new TFile("../../KstarEfficiency_binning7.root", "RECREATE");
+  TFile *fEfficiency = new TFile("../../KstarEfficiency_binning8.root", "RECREATE");
 
   TH2F *hRecAcc[4];
   TH2F *hMCAcc[4];
