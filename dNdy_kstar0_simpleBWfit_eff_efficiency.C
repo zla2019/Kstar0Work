@@ -21,7 +21,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
                                             int isAntiKstar = 0) {
 
   bool debug = true;
-  bool eff = false;
+  bool eff = true;
 
   // 0-10%, 10-40%, 40-60%, 0-80%
 
@@ -53,26 +53,26 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
 
   const int nCentFlow = 4;
   TString centName[] = {"0-10%", "10-40%", "40-60%", "0-80%"};
-  TString etaName[] = {"-0.8 < y < -0.6", "-0.6 < y < -0.4", "-0.4 < y < -0.2",
-                       "-0.2 < y < 0", "0 < y < 0.2"};
+  TString etaName[] = {"-1.0 < y < -0.75", "-0.75 < y < -0.5", "-0.5 < y < -0.25",
+                       "-0.25 < y < 0", "0 < y < 0.25"};
   TString etaNameFow[] = {"-1.0 < y < -0.8"}; // used at begining
   TString etaNameMid[] = {"-0.2 < y < 0.2"};
 
   // combined rap bin
-  TString etaNameTot[] = {"-1.0 < y < -0.8", "-0.8 < y < -0.6",
-                          "-0.6 < y < -0.4", "-0.4 < y < -0.2",
-                          "-0.2 < y < 0",    "0 < y < 0.2",
+  TString etaNameTot[] = {"-1.0 < y < -0.8", "-1.0 < y < -0.75",
+                          "-0.75 < y < -0.5", "-0.5 < y < -0.25",
+                          "-0.25 < y < 0",    "0 < y < 0.25",
                           "-0.2 < y < 0.2"};
-  TString etaNameTotScale[] = {"-1.0<y<-0.8, x2^{-1}", "-0.8<y<-0.6",
-                               "-0.6<y<-0.4, x2",      "-0.4<y<-0.2, x2^{2}",
-                               "-0.2<y<0,    x2^{3}",  "0<y<0.2,    x2^{4}",
+  TString etaNameTotScale[] = {"-1.0<y<-0.8, x2^{-1}", "-1.0<y<-0.75",
+                               "-0.75<y<-0.5, x2",      "-0.5<y<-0.25, x2^{2}",
+                               "-0.25<y<0,    x2^{3}",  "0<y<0.25,    x2^{4}",
                                "-0.2<y<0.2,  x2^{5}"};
 
-  double fctetaXaxis[] = {-0.8, -0.6, -0.4, -0.2, 0, 0.2};
+  double fctetaXaxis[] = {-1.0, -0.75, -0.5, -0.25, 0, 0.25};
   double fctetaXaxisFow[] = {-1.0, -0.8};
   double fctetaXaxisMid[] = {-0.2, 0.2};
 
-  float rapiditywidth = 0.2;
+  float rapiditywidth = 0.25;
   float rapiditywidthFow = 0.2;
   float rapiditywidthMid = 0.4;
 
@@ -104,11 +104,11 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   float scaler4Show[nTotEta] = {1., 1., 1., 1., 1., 1., 1}; // scale for clarity
   const Double_t RapiditypTLow[nTotEta][nCentFlow] = {
       {0.4, 0.4, 0.4}, //-1.0, -0.8
-      {0.4, 0.4, 0.4}, //-0.8, -0.6
-      {0.4, 0.4, 0.4}, //-0.6, -0.4
-      {0.4, 0.4, 0.4}, //-0.4, -0.2
-      {0.4, 0.4, 0.4}, //-0.2, 0
-      {0.4, 0.4, 0.4}, // 0, 0.2
+      {0.4, 0.4, 0.4}, //-1.0, -0.75
+      {0.4, 0.4, 0.4}, //-0.75, -0.5
+      {0.4, 0.4, 0.4}, //-0.5, -0.25
+      {0.4, 0.4, 0.4}, //-0.25, 0
+      {0.4, 0.4, 0.4}, // 0, 0.25
       {0.4, 0.4, 0.4}  // -0.2, 0.2
   };
   const Double_t RapiditypTHigh[nTotEta][nCentFlow] = {
@@ -124,10 +124,10 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   //    TFile::Open("1.6MMuDataTree_New_TPCorTOF_hist_Aug12.root"); TFile
   //    *pol_file = TFile::Open("Kstar0_20210823_embedding.root");
   TFile *pol_file =
-      TFile::Open("../../Kstar0_20210824_RealData_TPCandTOF.root");
+      TFile::Open("../../Kstar0_realData_binning1_20210901.root");
   TFile *efficiency = TFile::Open("../../KstarEfficiency.root");
   TFile *efficiency_bigRange =
-      TFile::Open("../../KstarEfficiency_binning1.root");
+      TFile::Open("../../KstarEfficiency_binning9.root");
   TFile *efficiency_fow_mid = TFile::Open("../../KstarEfficiency_fow_mid.root");
   TH2F *Efficiency[4];
   TH2F *EfficiencyBigRange[4];
@@ -2345,9 +2345,9 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   for (int icent = 0; icent < nCentFlow; icent++) {
     //    hXidNdy[icent] = new TH1F(Form("hXidNdy_icent%d", icent), "", 5, -0.8,
     //    0.2);
-    hXidNdy[icent] = new TH1F(Form("hXidNdy_icent%d", icent), "", 8, -0.8, 0.8);
+    hXidNdy[icent] = new TH1F(Form("hXidNdy_icent%d", icent), "", 8, -1.0, 1.0);
     hXidNdy_rf[icent] =
-        new TH1F(Form("hXidNdy_rf_icent%d", icent), "", 4, 0, 0.8);
+        new TH1F(Form("hXidNdy_rf_icent%d", icent), "", 4, 0, 1.0);
     hXidNdy_Mid[icent] =
         new TH1F(Form("hXidNdy_Mid_icent%d", icent), "", 1, fctetaXaxisMid);
   }
