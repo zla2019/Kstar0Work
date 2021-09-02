@@ -21,7 +21,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
                                             int isAntiKstar = 0) {
 
   bool debug = true;
-  bool eff = false;
+  bool eff = true;
 
   // 0-10%, 10-40%, 40-60%, 0-80%
 
@@ -126,7 +126,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   TFile *pol_file = TFile::Open("../../Kstar0_realData_binning1_20210901.root");
   TFile *efficiency = TFile::Open("../../KstarEfficiency.root");
   TFile *efficiency_bigRange =
-      TFile::Open("../../KstarEfficiency_binning1.root");
+      TFile::Open("../../KstarEfficiency_binning1_1.root");
   TFile *efficiency_fow_mid = TFile::Open("../../KstarEfficiency_fow_mid.root");
   TH2F *Efficiency[4];
   TH2F *EfficiencyBigRange[4];
@@ -443,10 +443,10 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
 
   // from inclusive K*0 invariant mass spectrum with 0.4 < pT < 2.0 and -0.5 < y
   // < 0 for 4 centrality bins
-  double initMassMean[] = {0.883, 0.884, 0.887, 0.885};
-  double initMassMeanErr[] = {0.006, 0.003, 0.002, 0.002};
-  double initMassWidth[] = {0.044, 0.037, 0.037, 0.041};
-  double initMassWidthErr[] = {0.014, 0.008, 0.008, 0.007};
+  double initMassMean[] = {0.885, 0.884, 0.887, 0.885};
+  double initMassMeanErr[] = {0.004, 0.003, 0.002, 0.002};
+  double initMassWidth[] = {0.035, 0.033, 0.045, 0.038};
+  double initMassWidthErr[] = {0.011, 0.007, 0.009, 0.006};
 
   // rapidity bins: (-0.8， 0.2)
   for (int icent = 0; icent < nCentFlow; icent++) {
@@ -2480,7 +2480,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   for (int icent = 0; icent < nCentFlow; icent++) {
     ca->cd(icent + 1)->SetGridy();
 
-    ax = gPad->DrawFrame(-1.0, 0, 1.0, hXidNdy[icent]->GetBinContent(4) * 1.7);
+    ax = gPad->DrawFrame(-1.0, 0, 1.0, hXidNdy[icent]->GetMaximum() * 1.7);
     SetAxis(ax, 1, 1);
     ax->SetYTitle("K^{*0} dN/dy");
     ax->SetXTitle("y");
