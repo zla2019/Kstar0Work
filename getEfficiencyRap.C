@@ -21,15 +21,30 @@ void getEfficiencyRap() {
   TH1F *hEfficiencyRap[4][nEtaBin];
 
   for (int icent = 0; icent < 4; ++icent) {
-    hRecAcc[icent] =
-        (TH2F *)fRec->Get(Form("hKstar0RapidityvsPt_cent%i", icent));
+      hRecAcc[icent] =
+          (TH2F *)fRec->Get(Form("hKstar0RapidityvsPt_cent%i", icent));
+      if (icent == 2) {
+        hRecAcc[icent]->Reset();
+        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 6)));
+        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 5)));
+      } else if (icent == 0) {
+        hRecAcc[icent]->Reset();
+        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 0)));
+        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 1)));
+      } else if (icent == 1) {
+        hRecAcc[icent]->Reset();
+        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 2)));
+        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 3)));
+        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 4)));
+      } else if (icent == 3) {
+        hRecAcc[icent]->Reset();
+        for (int icent2 = 0; icent2 < 9; ++icent2) {
+          hRecAcc[icent]->Add(
+              (TH2F *)fRec->Get(Form("hKstarAcc_cent%i", icent2)));
+        }
+      }
+      hMCAcc[icent] = (TH2F *)fMC->Get(Form("hKstarAcc_cent%i", icent));
     hMCAcc[icent] = (TH2F *)fMC->Get(Form("hKstarAcc_cent%i", icent));
-    /*
-        hEfficiency[icent] =
-            new TH2F(Form("Efficiency_cent%i", icent), "Efficiency", nEtaBin,
-                     etaBinBoundary[0], etaBinBoundary[nEtaBin], nPtBin,
-                     ptBinBoundary[0], ptBinBoundary[nPtBin]);
-    */
     hEfficiency[icent] =
         new TH2F(Form("Efficiency_cent%i", icent), "Efficiency", nEtaBin,
                  etaBinBoundary, nPtBin, ptBinBoundary);
