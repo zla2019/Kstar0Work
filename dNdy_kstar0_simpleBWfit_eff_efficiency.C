@@ -1849,13 +1849,16 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   TF1 *f1_exp;
   TF1 *f1_BW_ptdpt;
   TF1 *f1_BW_dpt;
+	TF1 *f1_Levy_dpt;
   double xiYield_int[nCentFlow][nTotEta];
   double xiYieldErr_int[nCentFlow][nTotEta];
 
   double *par;
 	double *parExp;
+	double *parLevy;
   const double *parErr;
 	const double *parExpErr;
+	const double *parLevyErr;
   double temperature[nCentFlow][nTotEta];
   double temperatureErr[nCentFlow][nTotEta];
 
@@ -1866,6 +1869,10 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   TF1 *ptmptBW[nCentFlow][nTotEta];
   TF1 *ptdptBW[nCentFlow][nTotEta];
   TF1 *ptBW[nCentFlow][nTotEta]; // just for plots
+
+  TF1 *ptmptLevy[nCentFlow][nTotEta];
+  TF1 *ptdptLevy[nCentFlow][nTotEta];
+  TF1 *ptLevy[nCentFlow][nTotEta]; // just for plots
 
   TCanvas *ca_dNdpTdy = new TCanvas("ca_dNdpTdy", "", 450 * nCentFlow, 400);
   ca_dNdpTdy->Divide(nCentFlow, 1);
@@ -1906,6 +1913,11 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
       f1_BW_dpt->SetLineColor(colorIndex[ieta]);
       f1_BW_dpt->SetLineWidth(2);
 
+	f1_Levy_dpt = new TF1("f1_Levy_dpt", LevyFcnPt, 0, 3., 4);
+	f1_Levy_dpt->SetParNames("A", "n", "T", "m0");
+	f1_Levy_dpt->SetParameters(1.44327e-04, 4.58379e+06, 1.82213e-01, 0.89594);
+	f1_Levy_dpt->FixParameter(3, 0.89594);
+
       f1_exp = new TF1("f1_exp", fitFuncExp, 0, 2.5, 2); //[0]*exp(-x/[1])*x
       f1_exp->SetParNames("Scale1", "Temperature");
       f1_exp->SetParameters(1.5e-03, 0.12);
@@ -1919,8 +1931,10 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
             hXidNdpT[ieta][icent]->Fit("f1_exp", "IRMN", "",
                                        RapiditypTLow[ieta][icent],
                                        RapiditypTHigh[ieta][icent]);
+	hXidNdpT[ieta][icent]->Fit("f1_Levy_dpt", "RMN", "", RapiditypTLow[ieta][icent], RapiditypTHigh[ieta][icent]);
       //      f1_exp->Draw("SAME");
-      f1_BW_dpt->Draw("SAME");
+      //f1_BW_dpt->Draw("SAME");
+	f1_Levy_dpt->Draw("same");
 
       hXidNdpT[ieta][icent]->SetYTitle("K^{*0} dN/dp_{T}/dy");
       hXidNdpT[ieta][icent]->SetXTitle("p_{T} [GeV/c]");
@@ -1931,6 +1945,9 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
 	parExpErr = f1_exp->GetParErrors();
       par = f1_BW_dpt->GetParameters();
       parErr = f1_BW_dpt->GetParErrors();
+	parLevy = f1_Levy_dpt->GetParameters();
+	parLevyErr = f1_Levy_dpt->GetParErrors();
+
       temperature[icent][ieta] = par[1];
       temperatureErr[icent][ieta] = parErr[1];
       cout << "chcking the fit parameter T in eta: " << etaNameTot[ieta].Data()
@@ -1967,6 +1984,11 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
       ptBW[icent][ieta]->SetParameters(par[0], par[1], par[2], par[3], par[4]);
       ptBW[icent][ieta]->SetChisquare(f1_BW_dpt->GetChisquare());
       ptBW[icent][ieta]->SetNDF(f1_BW_dpt->GetNDF());
+
+	ptLevy[icent][ieta] = new TF1(Form("ptLevy_cent%d_y%d", icent, ieta), BGBWPt, 0, 3, 5);
+	ptLevy[icent][ieta]->SetParameters(parLevy[0], parLevy[1], parLevy[2], parLevy[3]);
+	ptLevy[icent][ieta]->SetChisquare(f1_Levy_dpt->GetChisquare());
+	ptLevy[icent][ieta]->SetNDF(f1_Levy_dpt->GetNDF());
 
 //      ptmptBW[icent][ieta] =
 //          new TF1(Form("ptBW_cent%d_y%d", icent, ieta), BGBWMt, 0,
@@ -2031,8 +2053,10 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
       hXidNdpT[ieta][icent]->SetMarkerSize(1.0);
       hXidNdpT[ieta][icent]->SetMarkerColor(colorIndex[ieta]);
       hXidNdpT[ieta][icent]->SetLineColor(colorIndex[ieta]);
-      f1_BW_dpt->Draw("SAME");
-      f1_BW_dpt->SetLineColor(colorIndex[ieta]);
+	f1_Levy_dpt->Draw("same");
+	f1_Levy_dpt->SetLineColor(colorIndex[ieta]);
+//      f1_BW_dpt->Draw("SAME");
+//      f1_BW_dpt->SetLineColor(colorIndex[ieta]);
       legT->AddEntry(hXidNdpT[ieta][icent], Form("%s", etaNameTot[ieta].Data()),
                      "lp");
     }

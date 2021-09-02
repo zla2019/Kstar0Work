@@ -1,11 +1,11 @@
 #include <iostream>
 
 void getEfficiency() {
-  static const int nPtBin = 6;
-  static const int nEtaBin = 10;
+  static const int nPtBin = 16;
+  static const int nEtaBin = 8;
   static const int nTotEtaBin = 7;
-  const float ptBinBoundary[nPtBin + 1] = {0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0};
-  const float etaBinBoundary[nEtaBin + 1] = {-0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0, 0.1, 0.2};
+  const float ptBinBoundary[nPtBin + 1] = {0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0};
+  const float etaBinBoundary[nEtaBin + 1] = {-0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0};
 
   TFile *fRec = TFile::Open("../../ReconstructionKstarInfo_v2.root");
   TFile *fMC = TFile::Open("../../InputKstarInfo_v2.root");
@@ -58,5 +58,5 @@ void getEfficiency() {
   for (int icent = 0; icent < 4; ++icent) {
     hEfficiency[icent]->Write();
   }
-  hEfficiency[3]->Draw("colz");
+  hEfficiency[3]->Draw("colztext");
 }
