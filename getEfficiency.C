@@ -4,16 +4,17 @@ void getEfficiency() {
   static const int nPtBin = 16;
   static const int nEtaBin = 8;
   static const int nTotEtaBin = 7;
+	static const int nCent = 9;
   const float ptBinBoundary[nPtBin + 1] = {0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0};
   const float etaBinBoundary[nEtaBin + 1] = {-0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0};
 
-  TFile *fRec = TFile::Open("../../ReconstructionKstarInfo_v2.root");
-  TFile *fMC = TFile::Open("../../InputKstarInfo_v2.root");
+  TFile *fRec = TFile::Open("../../ReconstructionKstarInfo_v3.root");
+  TFile *fMC = TFile::Open("../../InputKstarInfo_v3.root");
   TFile *fEfficiency = new TFile("../../KstarEfficiency_test.root", "RECREATE");
 
-  TH2F *hRecAcc[4];
-  TH2F *hMCAcc[4];
-  TH2F *hEfficiency[4];
+  TH2F *hRecAcc[nCent];
+  TH2F *hMCAcc[nCent];
+  TH2F *hEfficiency[nCent];
 
   for (int icent = 0; icent < 4; ++icent) {
     hRecAcc[icent] =
