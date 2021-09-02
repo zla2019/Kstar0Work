@@ -6,7 +6,7 @@
 #include "TProfile.h"
 #include "TStyle.h"
 
-#include "../../func.h"
+#include "func.h"
 
 double IMcut[2] = {
     0.75,
