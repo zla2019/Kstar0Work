@@ -1,26 +1,26 @@
 #include <iostream>
 
 void getEfficiency() {
-  static const int nPtBin = 8;
-  static const int nEtaBin = 4;
+  static const int nPtBin = 4;
+  static const int nEtaBin = 5;
   static const int nTotEtaBin = 7;
   static const int nCent = 4;
-  const float ptBinBoundary[nPtBin + 1] = {0.4, 0.6, 0.8, 
-                                           1.0, 1.2, 1.4, 
-                                           1.6, 1.8, 2.0};
+  const float ptBinBoundary[nPtBin + 1] = {0.4, 0.8, 
+                                           1.2, 1.6, 
+                                           2.0};
   const float etaBinBoundary[nEtaBin + 1] = {-0.8, -0.6, -0.4,
-                                             -0.2, 0};
+                                             -0.2, 0, 0.2};
 
   TFile *fRec;
   TFile *fMC;
   if (nCent == 4) {
     fRec = TFile::Open("../../ReconstructionKstarInfo_v3.root");
-    fMC = TFile::Open("../../InputKstarInfo_v3.root");
+    fMC = TFile::Open("../../InputKstarInfo_v4.root");
   } else if (nCent == 9) {
     fRec = TFile::Open("../../ReconstructionKstarInfo_v3.root");
     fMC = TFile::Open("../../InputKstarInfo_v4.root");
   }
-  TFile *fEfficiency = new TFile("../../KstarEfficiency_binning1_1.root", "RECREATE");
+  TFile *fEfficiency = new TFile("../../KstarEfficiency_binning1_3.root", "RECREATE");
 
   TH2F *hRecAcc[nCent];
   TH2F *hMCAcc[nCent];
@@ -32,27 +32,46 @@ void getEfficiency() {
     if (nCent == 4) {
       hRecAcc[icent] =
           (TH2F *)fRec->Get(Form("hKstar0RapidityvsPt_cent%i", icent));
+        hMCAcc[icent] = (TH2F*)(((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", icent)))->Clone());
       if (icent == 2) {
         hRecAcc[icent]->Reset();
         hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 6)));
         hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 5)));
+        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 7)));
+        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 8)));
+
+        hMCAcc[icent]->Reset();
+        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 0)));
+        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 1)));
+        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 2)));
+        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 3)));
+
       } else if (icent == 0) {
         hRecAcc[icent]->Reset();
         hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 0)));
         hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 1)));
+        hMCAcc[icent]->Reset();
+        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 7)));
+        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 8)));
       } else if (icent == 1) {
         hRecAcc[icent]->Reset();
         hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 2)));
         hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 3)));
         hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 4)));
+        hMCAcc[icent]->Reset();
+        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 4)));
+        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 5)));
+        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 6)));
       } else if (icent == 3) {
         hRecAcc[icent]->Reset();
+        hMCAcc[icent]->Reset();
         for (int icent2 = 0; icent2 < 9; ++icent2) {
           hRecAcc[icent]->Add(
               (TH2F *)fRec->Get(Form("hKstarAcc_cent%i", icent2)));
+          hMCAcc[icent]->Add(
+              (TH2F *)fMC->Get(Form("hKstarAcc_cent%i", icent2)));
         }
       }
-      hMCAcc[icent] = (TH2F *)fMC->Get(Form("hKstarAcc_cent%i", icent));
     } else if (nCent == 9) {
       hRecAcc[icent] = (TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 8 - icent));
       hMCAcc[icent] = (TH2F *)fMC->Get(Form("hKstarAcc_cent%i", icent));

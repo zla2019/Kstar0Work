@@ -12,8 +12,9 @@ void getEfficiencyRap() {
                                              -0.3, -0.2, -0.1, 0};
 
   TFile *fRec = TFile::Open("../../ReconstructionKstarInfo_v3.root");
-  TFile *fMC = TFile::Open("../../InputKstarInfo_v3.root");
+  TFile *fMC = TFile::Open("../../InputKstarInfo_cent4.root");
   TFile *fEfficiency = new TFile("../../KstarEfficiency_Rap.root", "RECREATE");
+	const std::string centRange[4] = {"0-10%", "10-40%", "40-80%", "0-80%"};
 
   TH2F *hRecAcc[4];
   TH2F *hMCAcc[4];
@@ -27,6 +28,8 @@ void getEfficiencyRap() {
         hRecAcc[icent]->Reset();
         hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 6)));
         hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 5)));
+        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 7)));
+        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 8)));
       } else if (icent == 0) {
         hRecAcc[icent]->Reset();
         hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 0)));
@@ -81,7 +84,7 @@ void getEfficiencyRap() {
     }
   }
   fEfficiency->cd();
-  TCanvas *cTmp = new TCanvas("", "", 600 * 4, 400);
+  TCanvas *cTmp = new TCanvas("", "", 700 * 4, 600);
   cTmp->Divide(4, 1);
   for (int icent = 0; icent < 4; ++icent) {
     cTmp->cd(icent + 1);
@@ -97,6 +100,9 @@ void getEfficiencyRap() {
                       Form("%0.2f < y < %0.2f", etaBinBoundary[ieta],
                            etaBinBoundary[ieta + 1]),
                       "lep");
+	hEfficiencyRap[icent][ieta]->GetXaxis()->SetTitle("p_{T} [GeV/c]");
+	hEfficiencyRap[icent][ieta]->GetYaxis()->SetTitle("Efficiency");
+	hEfficiencyRap[icent][ieta]->SetTitle(Form("Efficiency, %s", centRange[icent].c_str()));
         hEfficiencyRap[icent][ieta]->Draw();
         leg->Draw("same");
       } else {

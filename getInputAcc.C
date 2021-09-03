@@ -2,7 +2,7 @@
 
 void getInputAcc()
 {
-	static const int nCent = 9;
+	static const int nCent = 4;
 	TFile *fInput = TFile::Open("../../InputMCTrackTree_v1.root");
 	TFile *fOutput = new TFile(Form("../../InputKstarInfo_cent%i.root", nCent), "RECREATE");
 
@@ -32,7 +32,7 @@ void getInputAcc()
 					hKstarAcc[0]->Fill(y[ikstar], sqrt(px[ikstar]*px[ikstar] + py[ikstar]*py[ikstar]));
 				} else if(cent >= 4) {
 					hKstarAcc[1]->Fill(y[ikstar], sqrt(px[ikstar]*px[ikstar] + py[ikstar]*py[ikstar]));
-				} else if(cent >= 2) {
+				} else if(cent >= 0) {
 					hKstarAcc[2]->Fill(y[ikstar], sqrt(px[ikstar]*px[ikstar] + py[ikstar]*py[ikstar]));
 				}
 				hKstarAcc[3]->Fill(y[ikstar], sqrt(px[ikstar]*px[ikstar] + py[ikstar]*py[ikstar]));

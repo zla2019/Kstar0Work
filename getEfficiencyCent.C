@@ -146,6 +146,8 @@ void getEfficiencyCent() {
                              centBinBoundary2[icent + 1].c_str()),
                         "lep");
         }
+	hEfficiencyRap[icent]->GetXaxis()->SetTitle("p_{T} [GeV/c]");
+	hEfficiencyRap[icent]->GetYaxis()->SetTitle("Efficiency");
         hEfficiencyRap[icent]->Draw();
         leg->Draw("same");
       } else {
@@ -161,6 +163,7 @@ void getEfficiencyCent() {
                         "lep");
         }
         hEfficiencyRap[icent]->SetLineColor(1 + icent);
+	hEfficiencyRap[icent]->SetMarkerColor(1 + icent);
         hEfficiencyRap[icent]->Draw("same");
       }
     }
