@@ -76,6 +76,8 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
 //    TFile *pol_file   = TFile::Open("19154032_5000010_kstar0Tree_TPCorTOF_hist_Aug12.root");
 //    TFile *pol_file   = TFile::Open("Kstar0_20210823_embedding.root");
     TFile *pol_file   = TFile::Open("../../Kstar0_realData_binning1_20210901.root");
+//    TFile *pol_file   = TFile::Open("../../Kstar0_realData_binning1_20210831.root");
+//    TFile *pol_file   = TFile::Open("../../Kstar0_20210824_RealData_TPCandTOF.root");
     
     const int nCent = 4;
     TString centMergedName[] = {"0-10%", "10-40%", "40-80%", "0-80%"};
@@ -225,10 +227,10 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
         
         double nInclKstar0_r = invMassVsCent_tot[icent]->Integral(invMassVsCent_tot[icent]->FindBin(1.2), invMassVsCent_tot[icent]->FindBin(1.5));
         double nBgKstar0_r   = invMassVsCent_bg[icent]->Integral(invMassVsCent_bg[icent]->FindBin(1.2), invMassVsCent_bg[icent]->FindBin(1.5));
-        double nInclKstar0_l = invMassVsCent_tot[icent]->Integral(invMassVsCent_tot[icent]->FindBin(0.6), invMassVsCent_tot[icent]->FindBin(0.75));
-        double nBgKstar0_l   = invMassVsCent_bg[icent]->Integral(invMassVsCent_bg[icent]->FindBin(0.6), invMassVsCent_bg[icent]->FindBin(0.75));
-        scaler[icent] = nInclKstar0_r / nBgKstar0_r;
-        //scaler[icent] = (nInclKstar0_r + nInclKstar0_l) / (nBgKstar0_r + nBgKstar0_l);
+        double nInclKstar0_l = invMassVsCent_tot[icent]->Integral(invMassVsCent_tot[icent]->FindBin(0.6), invMassVsCent_tot[icent]->FindBin(0.8));
+        double nBgKstar0_l   = invMassVsCent_bg[icent]->Integral(invMassVsCent_bg[icent]->FindBin(0.6), invMassVsCent_bg[icent]->FindBin(0.8));
+        //scaler[icent] = nInclKstar0_r / nBgKstar0_r;
+        scaler[icent] = (nInclKstar0_r + nInclKstar0_l) / (nBgKstar0_r + nBgKstar0_l);
         invMassVsCent_bg[icent]->Scale(scaler[icent]);
         
         maxCounts       = invMassVsCent_tot[icent]->GetBinContent(invMassVsCent_tot[icent]->GetMaximumBin());
