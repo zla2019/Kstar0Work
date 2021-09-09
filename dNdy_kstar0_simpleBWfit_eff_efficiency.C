@@ -86,12 +86,12 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   const int nPt = 6;
   double fctpTXaxis[nEta][nPt + 1] = {
       //{0.4, 0.6, 0.9, 1.2, 1.5, 2.0},
-      {0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8},//-0.8
-      {0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8},
-      {0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8},
-      {0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8},
-      {0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8},
-      {0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8} //0.4
+      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},//-0.8
+      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},
+      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},
+      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},
+      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},
+      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0} //0.4
   };
 
   const int nPtMid = 4;
@@ -104,24 +104,24 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   // clarity
   float scaler4Show[nTotEta] = {1., 1., 1., 1., 1., 1., 1}; // scale for clarity
   const Double_t RapiditypTLow[nTotEta][nCentFlow] = {
-      {0.4, 0.4, 0.4}, //-1.0, -0.8
-      {0.4, 0.4, 0.4}, //-0.8, -0.6
-      {0.4, 0.4, 0.4}, //-0.6, -0.4
-      {0.4, 0.4, 0.4}, //-0.4, -0.2
-      {0.4, 0.4, 0.4}, //-0.2, 0
-      {0.4, 0.4, 0.4}, // 0, 0.2
-      {0.4, 0.4, 0.4}, // 0.2, 0.4
-      {0.4, 0.4, 0.4}  // -0.2, 0.2
+      {0.2, 0.2, 0.2}, //-1.0, -0.8
+      {0.2, 0.2, 0.2}, //-0.8, -0.6
+      {0.2, 0.2, 0.2}, //-0.6, -0.4
+      {0.2, 0.2, 0.2}, //-0.4, -0.2
+      {0.2, 0.2, 0.2}, //-0.2, 0
+      {0.2, 0.2, 0.2}, // 0, 0.2
+      {0.2, 0.2, 0.2}, // 0.2, 0.4
+      {0.2, 0.2, 0.2}  // -0.2, 0.2
   };
   const Double_t RapiditypTHigh[nTotEta][nCentFlow] = {
-      {2.8, 2.8, 2.8}, 
-      {2.8, 2.8, 2.8}, 
-      {2.8, 2.8, 2.8}, 
-      {2.8, 2.8, 2.8},
-      {2.8, 2.8, 2.8}, 
-      {2.8, 2.8, 2.8}, 
-      {2.8, 2.8, 2.8},
-      {2.8, 2.8, 2.8}
+      {3.0, 3.0, 3.0}, 
+      {3.0, 3.0, 3.0}, 
+      {3.0, 3.0, 3.0}, 
+      {3.0, 3.0, 3.0},
+      {3.0, 3.0, 3.0}, 
+      {3.0, 3.0, 3.0}, 
+      {3.0, 3.0, 3.0},
+      {3.0, 3.0, 3.0}
   };
   //==================================================================
   // centrality
@@ -132,10 +132,10 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   //    TFile *pol_file =
   //    TFile::Open("1.6MMuDataTree_New_TPCorTOF_hist_Aug12.root"); TFile
   //    *pol_file = TFile::Open("Kstar0_20210823_embedding.root");
-  TFile *pol_file = TFile::Open("../../Kstar0_realData_binning1_20210901.root");
+  TFile *pol_file = TFile::Open("../../KstarRealData_binning12.root");
   TFile *efficiency = TFile::Open("../../KstarEfficiency.root");
   TFile *efficiency_bigRange =
-      TFile::Open("../../KstarEfficiency_binning1_4.root");
+      TFile::Open("../../KstarEfficiency_test.root");
   TFile *efficiency_fow_mid = TFile::Open("../../KstarEfficiency_fow_mid.root");
   TH2F *Efficiency[4];
   TH2F *EfficiencyBigRange[4];
@@ -455,8 +455,9 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   // < 0 for 4 centrality bins
   double initMassMean[] = {0.885, 0.884, 0.887, 0.885};
   double initMassMeanErr[] = {0.004, 0.003, 0.002, 0.002};
+	double initMassWidthErr[] = {0, 0, 0, 0};
   double initMassWidth[] = {0.035, 0.033, 0.045, 0.038};
-  double initMassWidthErr[] = {0.011, 0.007, 0.009, 0.006};
+//  double initMassWidthErr[] = {0.011, 0.007, 0.009, 0.006};
 
   // rapidity bins: (-0.8， 0.2)
   for (int icent = 0; icent < nCentFlow; icent++) {

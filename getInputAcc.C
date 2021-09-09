@@ -3,7 +3,7 @@
 void getInputAcc()
 {
 	static const int nCent = 4;
-	TFile *fInput = TFile::Open("../../InputMCTrackTree_v1.root");
+	TFile *fInput = TFile::Open("../../InputKstar0MCTree_v1.root");
 	TFile *fOutput = new TFile(Form("../../InputKstarInfo_cent%i.root", nCent), "RECREATE");
 
 	TH2F *hKstarAcc[nCent];

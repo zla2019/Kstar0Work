@@ -11,7 +11,7 @@ void getEfficiencyRap() {
   const float etaBinBoundary[nEtaBin + 1] = {-0.8, -0.7, -0.6, -0.5, -0.4,
                                              -0.3, -0.2, -0.1, 0};
 
-  TFile *fRec = TFile::Open("../../ReconstructionKstarInfo_v3.root");
+  TFile *fRec = TFile::Open("../../ReconstructionKstarInfo_v6.root");
   TFile *fMC = TFile::Open("../../InputKstarInfo_cent4.root");
   TFile *fEfficiency = new TFile("../../KstarEfficiency_Rap.root", "RECREATE");
 	const std::string centRange[4] = {"0-10%", "10-40%", "40-80%", "0-80%"};

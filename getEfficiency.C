@@ -14,13 +14,15 @@ void getEfficiency() {
   TFile *fRec;
   TFile *fMC;
   if (nCent == 4) {
-    fRec = TFile::Open("../../ReconstructionKstarInfo_v3.root");
-    fMC = TFile::Open("../../InputKstarInfo_v4.root");
+//    fRec = TFile::Open("../../ReconstructionKstarInfo_v3.root");
+//    fMC = TFile::Open("../../InputKstarInfo_v4.root");
+    fRec = TFile::Open("../../ReconstructionKstarInfo_v6.root");
+    fMC = TFile::Open("../../InputKstarInfo_cent9.root");
   } else if (nCent == 9) {
-    fRec = TFile::Open("../../ReconstructionKstarInfo_v3.root");
-    fMC = TFile::Open("../../InputKstarInfo_v4.root");
+    fRec = TFile::Open("../../ReconstructionKstarInfo_v6.root");
+    fMC = TFile::Open("../../InputKstarInfo_cent9.root");
   }
-  TFile *fEfficiency = new TFile("../../KstarEfficiency_binning1_4.root", "RECREATE");
+  TFile *fEfficiency = new TFile("../../KstarEfficiency_binning1_5.root", "RECREATE");
 
   TH2F *hRecAcc[nCent];
   TH2F *hMCAcc[nCent];
