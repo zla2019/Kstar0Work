@@ -1840,7 +1840,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
                              nXiYield[icent][nieta][ipt];
           hXiYieldVsMt[icent][ieta]->SetBinContent(
               ipt + 1,
-              yieldPt); // 1/(B.R. N_{ev}2#pim_{T})dN^{2}/dm_{T}dy (GeV/c)^{-2}
+              yieldMt); // 1/(B.R. N_{ev}2#pim_{T})dN^{2}/dm_{T}dy (GeV/c)^{-2}
 		std::cout << "pass 111 fill content: " << yieldPt << " ieta: " << ieta << " ipt: " << ipt << std::endl;
           hXiYieldVsMt[icent][ieta]->SetBinError(ipt + 1, yieldMtErr);
 

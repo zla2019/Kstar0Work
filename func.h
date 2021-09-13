@@ -87,7 +87,7 @@ double fitFuncbw(Double_t *x,Double_t *par) //bw + pol2
 
 double fitFuncExp(Double_t *x,Double_t *par) //mT exponential
 {
-  Double_t fitdNdy = par[0]*exp(-(sqrt(x[0]*x[0] + 0.892*0.892)-0.892)/par[1])*x[0];
+  Double_t fitdNdy = par[0]*exp(-(sqrt(x[0]*x[0] + 0.89594*0.89594)-0.89594)/par[1])*x[0];
 //  Double_t fitdNdy = par[0]*exp(-x[0]/par[1]);
   return fitdNdy;
 }

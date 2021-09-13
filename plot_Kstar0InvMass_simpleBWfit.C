@@ -80,7 +80,7 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
 //    TFile *pol_file   = TFile::Open("../../Kstar0_20210824_RealData_TPCandTOF.root");
     
     const int nCent = 4;
-    TString centMergedName[] = {"0-10%", "10-40%", "40-80%", "0-80%"};
+    TString centMergedName[] = {"0-10%", "10-40%", "40-60%", "0-60%"};
     TString ptName[]   = {"0.2<p_{T}<0.4 GeV/c", "0.4<p_{T}<0.8 GeV/c", "0.8<p_{T}<1.2 GeV/c", "1.2<p_{T}<1.6 GeV/c", "1.6<p_{T}<2.0 GeV/c", "2.0<p_{T}<3.0 GeV/c"};
     TString etaName[]  = {"-1.0<#eta<-0.8", "-0.8<#eta<-0.6", "-0.6<#eta<-0.4", "-0.4<#eta<-0.2", "-0.2<#eta<0", "0<#eta<0.2", "0.2<#eta<0.4", "0.4<#eta<1.0"};
     TString phiName[]  = { "-1", "-2/3", "-1/3", "0", "1/3", "2/3", "1"}; //unit: TMath::Pi()
@@ -122,13 +122,13 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
     //40-80%
     h3InvMassXiYvsPt_tot[2] = (TH3F*)    pol_file->Get(Form("%s_Cent5", histName.Data())); //40-50%
     h3InvMassXiYvsPt_tot[2]->Add( (TH3F*)pol_file->Get(Form("%s_Cent6", histName.Data())) ); //50-60%
-    h3InvMassXiYvsPt_tot[2]->Add( (TH3F*)pol_file->Get(Form("%s_Cent7", histName.Data())) ); //60-70%
-    h3InvMassXiYvsPt_tot[2]->Add( (TH3F*)pol_file->Get(Form("%s_Cent8", histName.Data())) ); //70-80%
+//    h3InvMassXiYvsPt_tot[2]->Add( (TH3F*)pol_file->Get(Form("%s_Cent7", histName.Data())) ); //60-70%
+//    h3InvMassXiYvsPt_tot[2]->Add( (TH3F*)pol_file->Get(Form("%s_Cent8", histName.Data())) ); //70-80%
     
     h3InvMassXiYvsPt_bg[2]  = (TH3F*)   pol_file->Get(Form("%s_%s_Cent5", histName.Data(), cutName.Data())); //40-50%
     h3InvMassXiYvsPt_bg[2]->Add( (TH3F*)pol_file->Get(Form("%s_%s_Cent6", histName.Data(), cutName.Data())) ); //50-60%
-    h3InvMassXiYvsPt_bg[2]->Add( (TH3F*)pol_file->Get(Form("%s_%s_Cent7", histName.Data(), cutName.Data())) ); //60-70%
-    h3InvMassXiYvsPt_bg[2]->Add( (TH3F*)pol_file->Get(Form("%s_%s_Cent8", histName.Data(), cutName.Data())) ); //70-80%
+//    h3InvMassXiYvsPt_bg[2]->Add( (TH3F*)pol_file->Get(Form("%s_%s_Cent7", histName.Data(), cutName.Data())) ); //60-70%
+//    h3InvMassXiYvsPt_bg[2]->Add( (TH3F*)pol_file->Get(Form("%s_%s_Cent8", histName.Data(), cutName.Data())) ); //70-80%
     
     //0-80%
     h3InvMassXiYvsPt_tot[3] = (TH3F*)    pol_file->Get(Form("%s_Cent7", histName.Data())); //60-70%
@@ -211,7 +211,7 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
     TLine *lineR[nCent];
     float maxCounts=0, maxCountsErr=0;
     float upperCounts[] = {32000, 15000};
-    TCanvas *ca_invMass = new TCanvas("ca_invMass","invMass of Kstar0", 450*nCent, 800);
+    TCanvas *ca_invMass = new TCanvas("ca_invMass","invMass of Kstar0", 512*nCent, 800);
     ca_invMass->Divide(nCent,2);
     
     gPad->SetTopMargin(0.01);
@@ -229,8 +229,8 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
         double nBgKstar0_r   = invMassVsCent_bg[icent]->Integral(invMassVsCent_bg[icent]->FindBin(1.2), invMassVsCent_bg[icent]->FindBin(1.5));
         double nInclKstar0_l = invMassVsCent_tot[icent]->Integral(invMassVsCent_tot[icent]->FindBin(0.6), invMassVsCent_tot[icent]->FindBin(0.8));
         double nBgKstar0_l   = invMassVsCent_bg[icent]->Integral(invMassVsCent_bg[icent]->FindBin(0.6), invMassVsCent_bg[icent]->FindBin(0.8));
-        //scaler[icent] = nInclKstar0_r / nBgKstar0_r;
-        scaler[icent] = (nInclKstar0_r + nInclKstar0_l) / (nBgKstar0_r + nBgKstar0_l);
+        scaler[icent] = nInclKstar0_r / nBgKstar0_r;
+        //scaler[icent] = (nInclKstar0_r + nInclKstar0_l) / (nBgKstar0_r + nBgKstar0_l);
         invMassVsCent_bg[icent]->Scale(scaler[icent]);
         
         maxCounts       = invMassVsCent_tot[icent]->GetBinContent(invMassVsCent_tot[icent]->GetMaximumBin());
