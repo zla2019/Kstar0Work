@@ -52,7 +52,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   //==================================================================
 
   const int nCentFlow = 4;
-  TString centName[] = {"0-10%", "10-40%", "40-80%", "0-80%"};
+  TString centName[] = {"0-10%", "10-40%", "40-60%", "0-60%"};
   TString etaName[] = {"-0.8 < y < -0.6", "-0.6 < y < -0.4", "-0.4 < y < -0.2",
                        "-0.2 < y < 0", "0 < y < 0.2", "0.2 < y < 0.4"};
   TString etaNameFow[] = {"-1.0 < y < -0.8"}; // used at begining
@@ -83,15 +83,15 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
 
   //-0.8 < y < 0.2
   const int nEta = 6;
-  const int nPt = 6;
+  const int nPt = 5;
   double fctpTXaxis[nEta][nPt + 1] = {
       //{0.4, 0.6, 0.9, 1.2, 1.5, 2.0},
-      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},//-0.8
-      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},
-      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},
-      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},
-      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},
-      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0} //0.4
+      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0},//-0.8
+      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0},
+      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0},
+      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0},
+      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0},
+      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0} //0.4
   };
 
   const int nPtMid = 4;
@@ -102,26 +102,26 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   const int nTotEta = 8;
   // float scaler4Show[nTotEta] = {0.5, 1., 2., 4., 8., 16., 32}; //scale for
   // clarity
-  float scaler4Show[nTotEta] = {1., 1., 1., 1., 1., 1., 1}; // scale for clarity
+  float scaler4Show[nTotEta] = {1., 1., 1., 1., 1., 1., 1., 1.}; // scale for clarity
   const Double_t RapiditypTLow[nTotEta][nCentFlow] = {
-      {0.2, 0.2, 0.2}, //-1.0, -0.8
-      {0.2, 0.2, 0.2}, //-0.8, -0.6
-      {0.2, 0.2, 0.2}, //-0.6, -0.4
-      {0.2, 0.2, 0.2}, //-0.4, -0.2
-      {0.2, 0.2, 0.2}, //-0.2, 0
-      {0.2, 0.2, 0.2}, // 0, 0.2
-      {0.2, 0.2, 0.2}, // 0.2, 0.4
-      {0.2, 0.2, 0.2}  // -0.2, 0.2
+      {0.4, 0.4, 0.4}, //-1.0, -0.8
+      {0.4, 0.4, 0.4}, //-0.8, -0.6
+      {0.4, 0.4, 0.4}, //-0.6, -0.4
+      {0.4, 0.4, 0.4}, //-0.4, -0.2
+      {0.4, 0.4, 0.4}, //-0.2, 0
+      {0.4, 0.4, 0.4}, // 0, 0.2
+      {0.4, 0.4, 0.4}, // 0.2, 0.4
+      {0.4, 0.4, 0.4}  // -0.2, 0.2
   };
   const Double_t RapiditypTHigh[nTotEta][nCentFlow] = {
-      {3.0, 3.0, 3.0}, 
-      {3.0, 3.0, 3.0}, 
-      {3.0, 3.0, 3.0}, 
-      {3.0, 3.0, 3.0},
-      {3.0, 3.0, 3.0}, 
-      {3.0, 3.0, 3.0}, 
-      {3.0, 3.0, 3.0},
-      {3.0, 3.0, 3.0}
+      {2.0, 2.0, 2.0}, 
+      {2.0, 2.0, 2.0}, 
+      {2.0, 2.0, 2.0}, 
+      {2.0, 2.0, 2.0},
+      {2.0, 2.0, 2.0}, 
+      {2.0, 2.0, 2.0}, 
+      {2.0, 2.0, 2.0},
+      {2.0, 2.0, 2.0}
   };
   //==================================================================
   // centrality
@@ -135,7 +135,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   TFile *pol_file = TFile::Open("../../KstarRealData_binning12.root");
   TFile *efficiency = TFile::Open("../../KstarEfficiency.root");
   TFile *efficiency_bigRange =
-      TFile::Open("../../KstarEfficiency_test.root");
+      TFile::Open("../../KstarEfficiency_binning1_7.root");
   TFile *efficiency_fow_mid = TFile::Open("../../KstarEfficiency_fow_mid.root");
   TH2F *Efficiency[4];
   TH2F *EfficiencyBigRange[4];
@@ -166,14 +166,14 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
                     hCentrality_event->GetBinContent(6) +
                     hCentrality_event->GetBinContent(5); // 10-40%
   nEvents_cent[2] = hCentrality_event->GetBinContent(4) +
-		    hCentrality_event->GetBinContent(3) +
+		    hCentrality_event->GetBinContent(3);/* +
                     hCentrality_event->GetBinContent(2) +
-                    hCentrality_event->GetBinContent(1); // 40-80%
+                    hCentrality_event->GetBinContent(1); */// 40-60%
   nEvents_cent[3] = nEvents_cent[2] +
-                    nEvents_cent[1] + nEvents_cent[0]; // 0-80%
+                    nEvents_cent[1] + nEvents_cent[0]; // 0-60%
   cout << "Number of events: " << nEvents_cent[0] << " (0-10%), "
-       << nEvents_cent[1] << " (10-40%), " << nEvents_cent[2] << " (40-80%), "
-       << nEvents_cent[3] << " (0-80%)." << endl;
+       << nEvents_cent[1] << " (10-40%), " << nEvents_cent[2] << " (40-60%), "
+       << nEvents_cent[3] << " (0-60%)." << endl;
 
   // TFile *pol_file   = TFile::Open(Form("macro/output/sys_%s_sig.root",
   // cutName.Data())); TFile *polBg_file =
@@ -205,7 +205,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   system(Form("mkdir -p ../../files/plots_%s", cutName.Data()));
   //==========================================================================================================================================
   // get historgram
-  TH3F *h3InvMassXiYvsPt_tot[nCentFlow]; // 0-10%, 10-40%, 40-80%, 0-80%
+  TH3F *h3InvMassXiYvsPt_tot[nCentFlow]; // 0-10%, 10-40%, 40-60%, 0-60%
   TH3F *h3InvMassXiYvsPt_bg[nCentFlow];
 
   // eta bins: -0.8， 0.2
@@ -251,28 +251,28 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
       (TH3F *)pol_file->Get(Form("%s_Cent5", histName.Data())); // 40-50%
   h3InvMassXiYvsPt_tot[2]->Add(
       (TH3F *)pol_file->Get(Form("%s_Cent6", histName.Data()))); // 50-60%
-  h3InvMassXiYvsPt_tot[2]->Add(
-      (TH3F *)pol_file->Get(Form("%s_Cent7", histName.Data()))); // 60-70%
-  h3InvMassXiYvsPt_tot[2]->Add(
-      (TH3F *)pol_file->Get(Form("%s_Cent8", histName.Data()))); // 70-80%
+//  h3InvMassXiYvsPt_tot[2]->Add(
+//      (TH3F *)pol_file->Get(Form("%s_Cent7", histName.Data()))); // 60-70%
+//  h3InvMassXiYvsPt_tot[2]->Add(
+//      (TH3F *)pol_file->Get(Form("%s_Cent8", histName.Data()))); // 70-80%
 
   h3InvMassXiYvsPt_bg[2] = (TH3F *)pol_file->Get(
       Form("%s_%s_Cent5", histName.Data(), cutName.Data())); // 40-50%
   h3InvMassXiYvsPt_bg[2]->Add((TH3F *)pol_file->Get(
       Form("%s_%s_Cent6", histName.Data(), cutName.Data()))); // 50-60%
-  h3InvMassXiYvsPt_bg[2]->Add((TH3F *)pol_file->Get(
-      Form("%s_%s_Cent7", histName.Data(), cutName.Data()))); // 60-70%
-  h3InvMassXiYvsPt_bg[2]->Add((TH3F *)pol_file->Get(
-      Form("%s_%s_Cent8", histName.Data(), cutName.Data()))); // 70-80%
+//  h3InvMassXiYvsPt_bg[2]->Add((TH3F *)pol_file->Get(
+//      Form("%s_%s_Cent7", histName.Data(), cutName.Data()))); // 60-70%
+//  h3InvMassXiYvsPt_bg[2]->Add((TH3F *)pol_file->Get(
+//      Form("%s_%s_Cent8", histName.Data(), cutName.Data()))); // 70-80%
 
-  // 0-80%
+  // 0-60%
   h3InvMassXiYvsPt_tot[3] = (TH3F*)h3InvMassXiYvsPt_tot[0]->Clone();         // 0-10%
   h3InvMassXiYvsPt_tot[3]->Add(h3InvMassXiYvsPt_tot[1]);         // 10-40%
-  h3InvMassXiYvsPt_tot[3]->Add(h3InvMassXiYvsPt_tot[2]);         // 40-80%
+  h3InvMassXiYvsPt_tot[3]->Add(h3InvMassXiYvsPt_tot[2]);         // 40-60%
 
   h3InvMassXiYvsPt_bg[3] = (TH3F*)h3InvMassXiYvsPt_bg[0]->Clone();        // 0-10%
   h3InvMassXiYvsPt_bg[3]->Add(h3InvMassXiYvsPt_bg[1]);        // 10-40%
-  h3InvMassXiYvsPt_bg[3]->Add(h3InvMassXiYvsPt_bg[2]);        // 40-80%
+  h3InvMassXiYvsPt_bg[3]->Add(h3InvMassXiYvsPt_bg[2]);        // 40-60%
 
   for (int icent = 0; icent < nCentFlow; icent++) {
     // rapidity bins: (-0.8， 0.2)
@@ -367,7 +367,7 @@ void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
   }
 
   // get acceptance histograms
-  TH2F *h2XiYvsPt_tot[nCentFlow]; // 0-10%, 10-40%, 40-80%
+  TH2F *h2XiYvsPt_tot[nCentFlow]; // 0-10%, 10-40%, 40-60%
   TH2F *h2XiYvsPt_bg[nCentFlow];
   for (int icent = 0; icent < nCentFlow; icent++) {
     h3InvMassXiYvsPt_tot[icent]->GetZaxis()->SetRange(16,

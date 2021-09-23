@@ -24,7 +24,7 @@ void dNdy_kstar0_simpleBWfit_differentPtBins(TString cutName = "Mix",
   bool eff = true;
 
   // 0-10%, 10-40%, 40-60%, 0-60%
-
+/*
   gStyle->SetOptStat(0);
   gStyle->SetOptTitle(0);
   gStyle->SetOptFit(0);
@@ -33,7 +33,7 @@ void dNdy_kstar0_simpleBWfit_differentPtBins(TString cutName = "Mix",
   gStyle->SetPadRightMargin(0.03);
   gStyle->SetPadBottomMargin(0.18);
   gStyle->SetPadTopMargin(0.05);
-
+*/
   TH3F::SetDefaultSumw2();
   TH2F::SetDefaultSumw2();
   TH1F::SetDefaultSumw2();
@@ -432,6 +432,33 @@ void dNdy_kstar0_simpleBWfit_differentPtBins(TString cutName = "Mix",
   //    return;
   //==========================================================================================================================================
   // extract Xi signal
+
+	TCanvas *ca_acc_cent3 = new TCanvas("", "", 800 * 3, 900);
+	ca_acc_cent3->Divide(3, 1);
+	ca_acc_cent3->cd(1)->SetLogz();
+	h2XiYvsPt_tot[3]->SetTitle("K^{*0} Acceptance");
+	h2XiYvsPt_tot[3]->Draw("colz");
+	h2XiYvsPt_tot[3]->GetXaxis()->SetRangeUser(-1.0, 0.4);
+	h2XiYvsPt_tot[3]->GetYaxis()->SetRangeUser(0, 3.0);
+	h2XiYvsPt_tot[3]->GetYaxis()->SetTitle("p_{T} [GeV/c]");
+	h2XiYvsPt_tot[3]->GetXaxis()->SetTitle("Rapidity");
+	ca_acc_cent3->cd(2)->SetLogz();
+	TH2F* htmp1 = (TH2F*)pol_file->Get("hKstar0Kaon_pt_y_cent3");
+	htmp1->SetTitle("K^{+} Acceptance");
+	htmp1->Draw("colz");
+	htmp1->GetXaxis()->SetRangeUser(-1.0, 0.4);
+	htmp1->GetYaxis()->SetRangeUser(0, 3.0);
+	htmp1->GetYaxis()->SetTitle("p_{T} [GeV/c]");
+	htmp1->GetXaxis()->SetTitle("Rapidity");
+	ca_acc_cent3->cd(3)->SetLogz();
+	TH2F* htmp2 = (TH2F*)pol_file->Get("hKstar0Pion_pt_y_cent3");
+	htmp2->SetTitle("#pi^{-} Acceptance");
+	htmp2->GetXaxis()->SetRangeUser(-1.0, 0.4);
+	htmp2->GetYaxis()->SetRangeUser(0, 3.0);
+	htmp2->GetYaxis()->SetTitle("p_{T} [GeV/c]");
+	htmp2->GetXaxis()->SetTitle("Rapidity");
+	htmp2->Draw("colz");
+	ca_acc_cent3->Print("../../files/checktmp.png");
 
   TF1 *f1_cent;
   TF1 *f2_bg;

@@ -3,6 +3,12 @@
 #include "TF1.h"
 #include "TProfile.h"
 
+const float pionmass = 0.13957;
+const float kaonmass = 0.493677;
+
+const float pT_mean = 1.2;
+const float T_ch = 0.15;
+
 double breitwigner(Double_t *x,Double_t *par) // Breit-Wigner function
 {
     Double_t fitsig = (par[0]*par[1]/(2.0*3.14159265358979323846)) / (par[1]*par[1]/4.0 + (x[0] - par[2])*(x[0] - par[2])) ;
@@ -19,6 +25,33 @@ double fitFuncbw(Double_t *x,Double_t *par) //bw + pol2
 {
     Double_t fitval = background(x,&par[3])  + breitwigner(x,par);
     return fitval;
+}
+
+double relbreitwigner(Double_t *x,Double_t *par) // relativistic Breit-Wigner function
+{
+    Double_t gamma_p = par[1] * pow(par[2], 4) * pow((pow(x[0]*x[0] - pow(pionmass,2) - pow(kaonmass,2), 2) - pow(2*pionmass*kaonmass,2)) / (pow(par[2]*par[2] - pow(pionmass,2) - pow(kaonmass,2), 2) - pow(2*pionmass*kaonmass,2)), 1.5) / pow(x[0], 4);
+    Double_t ps = x[0] * exp(-1.0 * sqrt(x[0]*x[0] + pT_mean*pT_mean) / T_ch) / sqrt(x[0]*x[0] + pT_mean*pT_mean);
+    Double_t fitsig = par[0]*x[0]*gamma_p*par[2]*ps / (par[2]*par[2]*gamma_p*gamma_p + pow(x[0]*x[0] - par[2]*par[2], 2));
+    return fitsig;
+}
+
+
+double anotherbreitwigner(Double_t *x, Double_t *par)
+{
+	return par[0] * 2 / TMath::Pi() * par[1] /(pow((pow(x[0], 2) - pow(par[2], 2)), 2) / pow(par[2], 2) + pow(par[1], 2));
+}
+
+
+double fitFuncbwRel(Double_t *x,Double_t *par) //rel. bw + pol2
+{
+    Double_t fitval = background(x,&par[3])  + relbreitwigner(x,par);
+    return fitval;
+}
+
+double fitFuncbwAnother(Double_t *x, Double_t *par)
+{
+	Double_t fitval = background(x,&par[3])  + anotherbreitwigner(x,par);
+	return fitval;
 }
 
 TH1F* SubtractBGFn( TH1F* hin, TF1* fbg, float xminFn, float xmaxFn ){
@@ -75,8 +108,15 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
 //    TFile *pol_file   = TFile::Open("kstar0_3gev_TPCandTOF_spinYmp5to0_flowYmp8to0_ana_hist.root");
 //    TFile *pol_file   = TFile::Open("19154032_5000010_kstar0Tree_TPCorTOF_hist_Aug12.root");
 //    TFile *pol_file   = TFile::Open("Kstar0_20210823_embedding.root");
-    TFile *pol_file   = TFile::Open("../../Kstar0_realData_binning1_20210901.root");
+    TFile *pol_file   = TFile::Open("../../KstarRealData_binning12.root");
+//    TFile *pol_file   = TFile::Open("../../Kstar0_mixkaon.root");
+//    TFile *pol_file   = TFile::Open("../../tar0Tree.root_TPCandTOF_hist_Aug12.root");
+//    TFile *pol_file   = TFile::Open("KstarMCRecMassCheck.root");
+//    TFile *pol_file   = TFile::Open("../../tar0Tree.root_TPCandTOF_hist.root");
+//    TFile *pol_file   = TFile::Open("../../KstarMCRecMassCheck.root");
+//    TFile *pol_file   = TFile::Open("../../KstarRot.root");
 //    TFile *pol_file   = TFile::Open("../../Kstar0_realData_binning1_20210831.root");
+//    TFile *pol_file   = TFile::Open("../../KstarMassWidthCheck.root");
 //    TFile *pol_file   = TFile::Open("../../Kstar0_20210824_RealData_TPCandTOF.root");
     
     const int nCent = 4;
@@ -321,12 +361,15 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
         
         TLine *unitaty = new TLine(lowFitRange, 0., highFitRange, 0.);
         unitaty->Draw();
-        
-        f1_cent = new TF1("f1_cent", fitFuncbw, lowFitRange, highFitRange, 6);//7); //order
+  
+	f1_cent = new TF1("f1_cent", fitFuncbw, lowFitRange, highFitRange, 6);      
+//        f1_cent = new TF1("f1_cent", fitFuncbwRel, lowFitRange, highFitRange, 6);//7); //order
         f1_cent->SetParNames("Scale1", "Width", "Mean","p0", "p1", "p2");//, "p3");
-        //f1_cent->SetParLimits(0, 0, 50000);
+//        f1_cent->SetParLimits(0, 0, 200000);
         f1_cent->SetParLimits(1, 0.03, 0.07);
-        f1_cent->SetParLimits(2, 0.85, 0.93);
+	f1_cent->SetParameter(2, 0.895);
+//        f1_cent->SetParLimits(2, 0.85, 0.93);
+        f1_cent->SetParLimits(2, 0.88, 0.90);
         f1_cent->SetLineColor(kBlack);
         //f1_cent->SetNpx(hKstar0Mass_sig[i]->GetNbinsX());
         //f1_cent->SetNpx(45);   // 0.45/0.01 = 45
@@ -358,6 +401,7 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
         f2_bg->Draw("SAME");
         
         f2_sig = new TF1("f2_sig", breitwigner, lowFitRange, highFitRange, 3); //order
+//        f2_sig = new TF1("f2_sig", relbreitwigner, lowFitRange, highFitRange, 3); //order
         f2_sig->SetLineColor(kRed);
         f2_sig->SetLineStyle(2);
         //f2_sig->SetNpx(hKstar0Mass_sig[i]->GetNbinsX());
