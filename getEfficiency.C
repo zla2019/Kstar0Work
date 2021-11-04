@@ -16,13 +16,15 @@ void getEfficiency() {
   if (nCent == 4) {
 //    fRec = TFile::Open("../../ReconstructionKstarInfo_v3.root");
 //    fMC = TFile::Open("../../InputKstarInfo_v4.root");
-    fRec = TFile::Open("../../ReconstructionKstarInfo_v6.root");
-    fMC = TFile::Open("../../InputKstarInfo_cent9.root");
+//    fRec = TFile::Open("../../ReconstructionKstarInfo_v6.root");
+    fRec = TFile::Open("../../embedding_data/InputRecKstar_cent4_20211101.root");
+//    fMC = TFile::Open("../../InputKstarInfo_cent9.root");
+    fMC = TFile::Open("../../embedding_data/InputKstarInfo_cent4_20211101.root");
   } else if (nCent == 9) {
-    fRec = TFile::Open("../../ReconstructionKstarInfo_v6.root");
-    fMC = TFile::Open("../../InputKstarInfo_cent9.root");
+    fRec = TFile::Open("../../embedding_data/embedding_Rec_20211101.root");
+    fMC = TFile::Open("../../embedding_data/InputKstarInfo_cent4_20211101.root");
   }
-  TFile *fEfficiency = new TFile("../../KstarEfficiency_binning1_7.root", "RECREATE");
+  TFile *fEfficiency = new TFile("../../efficiency/KstarEfficiency_20211101.root", "RECREATE");
 
   TH2F *hRecAcc[nCent];
   TH2F *hMCAcc[nCent];
@@ -32,48 +34,8 @@ void getEfficiency() {
 
   for (int icent = 0; icent < nCent; ++icent) {
     if (nCent == 4) {
-      hRecAcc[icent] =
-          (TH2F *)fRec->Get(Form("hKstar0RapidityvsPt_cent%i", icent));
-        hMCAcc[icent] = (TH2F*)(((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", icent)))->Clone());
-      if (icent == 2) {
-        hRecAcc[icent]->Reset();
-        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 6)));
-        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 5)));
-        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 7)));
-        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 8)));
-
-        hMCAcc[icent]->Reset();
-        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 0)));
-        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 1)));
-        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 2)));
-        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 3)));
-
-      } else if (icent == 0) {
-        hRecAcc[icent]->Reset();
-        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 0)));
-        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 1)));
-        hMCAcc[icent]->Reset();
-        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 7)));
-        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 8)));
-      } else if (icent == 1) {
-        hRecAcc[icent]->Reset();
-        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 2)));
-        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 3)));
-        hRecAcc[icent]->Add((TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 4)));
-        hMCAcc[icent]->Reset();
-        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 4)));
-        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 5)));
-        hMCAcc[icent]->Add((TH2F *)fMC->Get(Form("hKstarAcc_cent%i", 6)));
-      } else if (icent == 3) {
-        hRecAcc[icent]->Reset();
-        hMCAcc[icent]->Reset();
-        for (int icent2 = 0; icent2 < 9; ++icent2) {
-          hRecAcc[icent]->Add(
-              (TH2F *)fRec->Get(Form("hKstarAcc_cent%i", icent2)));
-          hMCAcc[icent]->Add(
-              (TH2F *)fMC->Get(Form("hKstarAcc_cent%i", icent2)));
-        }
-      }
+	hRecAcc[icent] = (TH2F*)fRec->Get(Form("hKstarAcc_cent%i", icent));
+	hMCAcc[icent] = (TH2F*)fMC->Get(Form("hKstarAcc_cent%i", icent));
     } else if (nCent == 9) {
       hRecAcc[icent] = (TH2F *)fRec->Get(Form("hKstarAcc_cent%i", 8 - icent));
       hMCAcc[icent] = (TH2F *)fMC->Get(Form("hKstarAcc_cent%i", icent));
@@ -104,12 +66,20 @@ void getEfficiency() {
                                      ptBinBoundary[ipt] + 0.000001),
                                  hMCAcc[icent]->ProjectionY()->FindBin(
                                      ptBinBoundary[ipt + 1] - 0.000001)};
+        int integralRecXLimit[2] = {hRecAcc[icent]->ProjectionX()->FindBin(
+                                     etaBinBoundary[ieta] + 0.000001),
+                                 hRecAcc[icent]->ProjectionX()->FindBin(
+                                     etaBinBoundary[ieta + 1] - 0.000001)};
+        int integralRecYLimit[2] = {hRecAcc[icent]->ProjectionY()->FindBin(
+                                     ptBinBoundary[ipt] + 0.000001),
+                                 hRecAcc[icent]->ProjectionY()->FindBin(
+                                     ptBinBoundary[ipt + 1] - 0.000001)};
         float inputCount =
             hMCAcc[icent]->Integral(integralXLimit[0], integralXLimit[1],
                                     integralYLimit[0], integralYLimit[1]);
         float reconstructCount =
-            hRecAcc[icent]->Integral(integralXLimit[0], integralXLimit[1],
-                                     integralYLimit[0], integralYLimit[1]);
+            hRecAcc[icent]->Integral(integralRecXLimit[0], integralRecXLimit[1],
+                                     integralRecYLimit[0], integralRecYLimit[1]);
 
         hRecAccRebin[icent]->SetBinContent(ieta + 1, ipt + 1, reconstructCount);
         hMCAccRebin[icent]->SetBinContent(ieta + 1, ipt + 1, inputCount);
@@ -124,9 +94,50 @@ void getEfficiency() {
   }
   fEfficiency->cd();
   for (int icent = 0; icent < nCent; ++icent) {
+	hRecAccRebin[icent]->SetEntries(hRecAccRebin[icent]->Integral());
+	hMCAccRebin[icent]->SetEntries(hMCAccRebin[icent]->Integral());
     hRecAccRebin[icent]->Write();
     hMCAccRebin[icent]->Write();
     hEfficiency[icent]->Write();
   }
   hEfficiency[2]->Draw("colztext");
+}
+
+
+float getEfficiency(int icent, float etaLower, float etaHigher, float ptLower, float ptHigher) {
+
+  TFile *fRec;
+  TFile *fMC;
+  fRec = TFile::Open("../../embedding_data/InputRecKstar_cent4.root");
+  fMC = TFile::Open("../../embedding_data/InputKstarInfo_cent4.root");
+
+  TH2F *hRecAcc;
+  TH2F *hMCAcc;
+
+    hRecAcc = (TH2F*)fRec->Get(Form("hKstarAcc_cent%i", icent));
+    hMCAcc = (TH2F*)fMC->Get(Form("hKstarAcc_cent%i", icent));
+    int integralXLimit[2] = {hMCAcc->ProjectionX()->FindBin(
+                                 etaLower + 0.000001),
+                             hMCAcc->ProjectionX()->FindBin(
+                                 etaHigher - 0.000001)};
+    int integralYLimit[2] = {hMCAcc->ProjectionY()->FindBin(
+                                 ptLower + 0.000001),
+                             hMCAcc->ProjectionY()->FindBin(
+                                 ptHigher - 0.000001)};
+    int integralRecXLimit[2] = {hRecAcc->ProjectionX()->FindBin(
+                                 etaLower + 0.000001),
+                             hRecAcc->ProjectionX()->FindBin(
+                                 etaHigher - 0.000001)};
+    int integralRecYLimit[2] = {hRecAcc->ProjectionY()->FindBin(
+                                 ptLower + 0.000001),
+                             hRecAcc->ProjectionY()->FindBin(
+                                 ptHigher - 0.000001)};
+    float inputCount =
+        hMCAcc->Integral(integralXLimit[0], integralXLimit[1],
+                                integralYLimit[0], integralYLimit[1]);
+    float reconstructCount =
+        hRecAcc->Integral(integralRecXLimit[0], integralRecXLimit[1],
+                                integralRecYLimit[0], integralRecYLimit[1]);
+    float binContent = (float)reconstructCount / (float)inputCount;
+	return binContent;
 }

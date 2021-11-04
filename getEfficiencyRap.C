@@ -11,10 +11,13 @@ void getEfficiencyRap() {
   const float etaBinBoundary[nEtaBin + 1] = {-0.8, -0.7, -0.6, -0.5, -0.4,
                                              -0.3, -0.2, -0.1, 0};
 
-  TFile *fRec = TFile::Open("../../ReconstructionKstarInfo_v6.root");
-  TFile *fMC = TFile::Open("../../InputKstarInfo_cent4.root");
-  TFile *fEfficiency = new TFile("../../KstarEfficiency_Rap.root", "RECREATE");
-	const std::string centRange[4] = {"0-10%", "10-40%", "40-80%", "0-80%"};
+	TFile *fRec = TFile::Open("../../embedding_data/InputRecKstar_cent4_20211101.root");
+	TFile *fMC = TFile::Open("../../embedding_data/InputKstarInfo_cent4_20211101.root");
+
+//  TFile *fRec = TFile::Open("../../ReconstructionKstarInfo_v6.root");
+//  TFile *fMC = TFile::Open("../../InputKstarInfo_cent4.root");
+  TFile *fEfficiency = new TFile("../../KstarEfficiency_Rap_test.root", "RECREATE");
+	const std::string centRange[4] = {"0-10%", "10-40%", "40-60%", "0-60%"};
 
   TH2F *hRecAcc[4];
   TH2F *hMCAcc[4];
@@ -22,7 +25,9 @@ void getEfficiencyRap() {
   TH1F *hEfficiencyRap[4][nEtaBin];
 
   for (int icent = 0; icent < 4; ++icent) {
-      hRecAcc[icent] =
+	hRecAcc[icent] = (TH2F*)fRec->Get(Form("hKstarAcc_cent%i", icent));
+	hMCAcc[icent] = (TH2F*)fMC->Get(Form("hKstarAcc_cent%i", icent));
+/*      hRecAcc[icent] =
           (TH2F *)fRec->Get(Form("hKstar0RapidityvsPt_cent%i", icent));
       if (icent == 2) {
         hRecAcc[icent]->Reset();
@@ -47,7 +52,7 @@ void getEfficiencyRap() {
         }
       }
       hMCAcc[icent] = (TH2F *)fMC->Get(Form("hKstarAcc_cent%i", icent));
-    hMCAcc[icent] = (TH2F *)fMC->Get(Form("hKstarAcc_cent%i", icent));
+    hMCAcc[icent] = (TH2F *)fMC->Get(Form("hKstarAcc_cent%i", icent));*/
     hEfficiency[icent] =
         new TH2F(Form("Efficiency_cent%i", icent), "Efficiency", nEtaBin,
                  etaBinBoundary, nPtBin, ptBinBoundary);
@@ -94,7 +99,7 @@ void getEfficiencyRap() {
       hEfficiencyRap[icent][ieta]->Write();
       if (ieta == 0) {
         hEfficiencyRap[icent][ieta]->SetLineColor(1);
-        hEfficiencyRap[icent][ieta]->GetYaxis()->SetRangeUser(0, 0.75);
+        hEfficiencyRap[icent][ieta]->GetYaxis()->SetRangeUser(0, 0.95);
         hEfficiencyRap[icent][ieta]->SetStats(0);
         leg->AddEntry(hEfficiencyRap[icent][ieta],
                       Form("%0.2f < y < %0.2f", etaBinBoundary[ieta],

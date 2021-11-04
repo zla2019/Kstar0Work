@@ -1,0 +1,775 @@
+--- dNdy_kstar0_simpleBWfit_differentPtBins.C	2021-10-29 13:34:57.936619800 +0800
++++ dNdy_kstar0_simpleBWfit_eff_efficiency.C	2021-10-27 15:04:37.468762700 +0800
+@@ -5,27 +5,26 @@
+ #include "TMinuit.h"
+ #include "TProfile.h"
+ #include "TStyle.h"
+-#include "getEfficiency.C"
+ 
+ #include "func.h"
+ 
+ double IMcut[2] = {
+     0.75,
+     1.05}; // K*0 mass from PDG = 895.94 +- 0.22 [MeV/c2], width 48.7 +- 0.8 MeV
+-int colorIndex[] = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11};
++int colorIndex[] = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12};
+ double sigma = 0.049;
+ float br = 1.00;
+ 
+ TGraphErrors *convertToGraph(TH1F *h);
+ 
+-void dNdy_kstar0_simpleBWfit_differentPtBins(TString cutName = "Mix",
++void dNdy_kstar0_simpleBWfit_eff_efficiency(TString cutName = "Mix",
+                                             int isAntiKstar = 0) {
+ 
+   bool debug = true;
+   bool eff = false;
+ 
+-  // 0-10%, 10-40%, 40-60%, 0-60%
+-/*
++  // 0-10%, 10-40%, 40-60%, 0-80%
++
+   gStyle->SetOptStat(0);
+   gStyle->SetOptTitle(0);
+   gStyle->SetOptFit(0);
+@@ -34,7 +33,7 @@
+   gStyle->SetPadRightMargin(0.03);
+   gStyle->SetPadBottomMargin(0.18);
+   gStyle->SetPadTopMargin(0.05);
+-*/
++
+   TH3F::SetDefaultSumw2();
+   TH2F::SetDefaultSumw2();
+   TH1F::SetDefaultSumw2();
+@@ -54,22 +53,22 @@
+ 
+   const int nCentFlow = 4;
+   TString centName[] = {"0-10%", "10-40%", "40-60%", "0-60%"};
+-  TString etaName[] = {"-0.8 < y < -0.6", "-0.6 < y < -0.4", "-0.4 < y < -0.2",
++  TString etaName[] = {"-1.0 < y < -0.8", "-0.8 < y < -0.6", "-0.6 < y < -0.4", "-0.4 < y < -0.2",
+                        "-0.2 < y < 0", "0 < y < 0.2", "0.2 < y < 0.4"};
+   TString etaNameFow[] = {"-1.0 < y < -0.8"}; // used at begining
+   TString etaNameMid[] = {"-0.2 < y < 0.2"};
+ 
+   // combined rap bin
+-  TString etaNameTot[] = {"-1.0 < y < -0.8", "-0.8 < y < -0.6",
++  TString etaNameTot[] = {"-1.0 < y < -0.8", "-1.0 < y < -0.8", "-0.8 < y < -0.6",
+                           "-0.6 < y < -0.4", "-0.4 < y < -0.2",
+                           "-0.2 < y < 0",    "0 < y < 0.2", "0.2 < y < 0.4",
+                           "-0.2 < y < 0.2"};
+-  TString etaNameTotScale[] = {"-1.0<y<-0.8, x2^{-1}", "-0.8<y<-0.6",
++  TString etaNameTotScale[] = {"-1.0<y<-0.8, x2^{-1}", "-1.0<y<-0.8", "-0.8<y<-0.6",
+                                "-0.6<y<-0.4, x2",      "-0.4<y<-0.2, x2^{2}",
+                                "-0.2<y<0,    x2^{3}",  "0<y<0.2,    x2^{4}", "0.2<y<0.4, x2^{5}",
+                                "-0.2<y<0.2,  x2^{5}"};
+ 
+-  double fctetaXaxis[] = {-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4};
++  double fctetaXaxis[] = {-1.0, -0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4};
+   double fctetaXaxisFow[] = {-1.0, -0.8};
+   double fctetaXaxisMid[] = {-0.2, 0.2};
+ 
+@@ -83,56 +82,32 @@
+   double fctpTFowXaxis[nPtFow + 1] = {0.4, 0.9, 1.4, 2.0};
+ 
+   //-0.8 < y < 0.2
+-  const int nEta = 6;
+-  const int nPt = 6;
++  const int nEta = 7;
++  const int nPt = 5;
+   double fctpTXaxis[nEta][nPt + 1] = {
+       //{0.4, 0.6, 0.9, 1.2, 1.5, 2.0},
+-      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},//-0.8
+-      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},
+-      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},
+-      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},
+-      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0},
+-      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0} //0.4
++      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0},//-1.0 - -0.8
++      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0},//-0.8 - -0.6
++      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0},//-0.6 - -0.4
++      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0},//-0.4 - -0.2
++      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0},//-0.2 - 0
++      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0},//-0 - 0.2
++      {0.2, 0.4, 0.8, 1.2, 1.6, 2.0},//0.2 - 0.4
+   };
+-/*	float pTBoundaryBuffer[nCentFlow][nEta][nPt + 1] = {
+-		{ { 0.2, 0.8, 1.6, 2.0, 0.0, 0.0, 0.0 }, { 0.2, 0.4, 1.0, 1.6, 2.0, 0.0, 0.0 }, { 0.2, 0.4, 1.0, 1.6, 2.0, 0.0, 0.0 }, { 0.2, 0.4, 1.0, 1.6, 2.0, 0.0, 0.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 } }, //cent 0
+-		{ { 0.2, 0.8, 1.6, 2.0, 0.0, 0.0, 0.0 }, { 0.2, 0.8, 1.2, 2.0, 0.0, 0.0, 0.0 }, { 0.2, 0.4, 1.2, 1.6, 2.0, 0.0, 0.0 }, { 0.2, 0.4, 0.8, 1.6, 2.0, 0.0, 0.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 } }, //cent 1
+-		{ { 0.2, 0.4, 1.2, 2.0, 0.0, 0.0, 0.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 0.0 }, { 0.2, 0.4, 0.8, 1.2, 2.0, 0.0, 0.0 }, { 0.2, 0.4, 0.6, 0.8, 1.4, 2.0, 0.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 } }, //cent 2
+-		{ { 0.2, 0.4, 0.8, 1.6, 2.0, 0.0, 0.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 0.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 0.0 }, { 0.2, 0.4, 0.8, 1.6, 2.0, 0.0, 0.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 } }  //cent 3
+-	};
+-*/
+-	float pTBoundaryBuffer[nCentFlow][nEta][nPt + 1] = {
+-		{ { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 } }, //cent 0
+-		{ { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 } }, //cent 1
+-		{ { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 } }, //cent 2
+-		{ { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 }, { 0.2, 0.4, 0.8, 1.2, 1.6, 2.0, 3.0 } }  //cent 3
+-	};
+-
+-//	const int nPTBinsArr[nCentFlow][nEta] = { { 3, 4, 4, 4, 6, 6 }, { 3, 3, 4, 4, 6, 6 }, { 3, 5, 4, 5, 6, 6 }, { 4, 5, 5, 4, 6, 6 } };
+-	const int nPTBinsArr[nCentFlow][nEta] = { { 6, 6, 6, 6, 6, 6 }, { 6, 6, 6, 6, 6, 6 }, { 6, 6, 6, 6, 6, 6 }, { 6, 6, 6, 6, 6, 6 } };
+-	const float* pTBoundaryArr[nCentFlow][nEta];
+-	for(int icent = 0; icent < nCentFlow; ++icent) {
+-		for(int ieta = 0; ieta < nEta; ++ieta) {
+-			pTBoundaryArr[icent][ieta] = &pTBoundaryBuffer[icent][ieta][0];
+-//			for(int ipt = 0; ipt < nPTBinsArr[icent][ieta] + 1; ++ipt) {
+-//				std::cout << pTBoundaryArr[icent][ieta][ipt] << "\t";
+-//			}
+-//			std::cout << std::endl;
+-		}
+-	}
+ 
+   const int nPtMid = 4;
+   double fctpTMidXaxis[nPtMid + 1] = {0.4, 0.8, 1.2, 1.6, 2.0};
+   // double fctpTMidXaxis[nPtMid+1] = {0.4, 0.7, 1.0, 1.3, 1.6, 2.0};
+ 
+   // nTotEta begin to include all !!!
+-  const int nTotEta = 8;
++  const int nTotEta = 9;
+   // float scaler4Show[nTotEta] = {0.5, 1., 2., 4., 8., 16., 32}; //scale for
+   // clarity
+   float scaler4Show[nTotEta] = { 1. }; // scale for clarity
+   const Double_t RapiditypTLow[nTotEta][nCentFlow] = {
+       {0.4, 0.4, 0.4}, //-1.0, -0.8
+       {0.4, 0.4, 0.4}, //-0.8, -0.6
++      {0.4, 0.4, 0.4}, //-0.8, -0.6
+       {0.4, 0.4, 0.4}, //-0.6, -0.4
+       {0.4, 0.4, 0.4}, //-0.4, -0.2
+       {0.4, 0.4, 0.4}, //-0.2, 0
+@@ -144,6 +119,7 @@
+       {2.0, 2.0, 2.0}, 
+       {2.0, 2.0, 2.0}, 
+       {2.0, 2.0, 2.0}, 
++      {2.0, 2.0, 2.0}, 
+       {2.0, 2.0, 2.0},
+       {2.0, 2.0, 2.0}, 
+       {2.0, 2.0, 2.0}, 
+@@ -159,23 +135,21 @@
+   //    TFile *pol_file =
+   //    TFile::Open("1.6MMuDataTree_New_TPCorTOF_hist_Aug12.root"); TFile
+   //    *pol_file = TFile::Open("Kstar0_20210823_embedding.root");
+-//  TFile *pol_file = TFile::Open("../../KstarRealData_binning12.root");
+-//  TFile *pol_file = TFile::Open("../../Kstar0_realData_binning1_20210901.root");
+   TFile *pol_file = TFile::Open("../../newMix_20211024.root");
+ //  TFile *pol_file = TFile::Open("../../newMix_20211017.root");
+   TFile *efficiency = TFile::Open("../../KstarEfficiency.root");
+   TFile *efficiency_bigRange =
+-      TFile::Open("../../KstarEfficiency_binning2_0.root");
++      TFile::Open("../../KstarEfficiency_binning1_7.root");
+   TFile *efficiency_fow_mid = TFile::Open("../../KstarEfficiency_fow_mid.root");
+   TH2F *Efficiency[4];
+-  TH2Poly *EfficiencyBigRange[4];
++  TH2F *EfficiencyBigRange[4];
+   TH2F *EfficiencyFow[4];
+   TH2F *EfficiencyMid[4];
+   for (int icent = 0; icent < 4; ++icent) {
+     Efficiency[icent] = new TH2F("", "", 20, -1, 1, 100, 0, 5);
+     TH2F *htmp = (TH2F *)efficiency->Get(Form("Efficiency_cent%i", icent));
+     EfficiencyBigRange[icent] =
+-        (TH2Poly *)efficiency_bigRange->Get(Form("Efficiency_cent%i", icent));
++        (TH2F *)efficiency_bigRange->Get(Form("Efficiency_cent%i", icent));
+     EfficiencyFow[icent] =
+         (TH2F *)efficiency_fow_mid->Get(Form("Efficiency_fow_cent%i", icent));
+     EfficiencyMid[icent] =
+@@ -198,7 +172,7 @@
+   nEvents_cent[2] = hCentrality_event->GetBinContent(4) +
+ 		    hCentrality_event->GetBinContent(3);/* +
+                     hCentrality_event->GetBinContent(2) +
+-                    hCentrality_event->GetBinContent(1); // 40-60%*/
++                    hCentrality_event->GetBinContent(1); */// 40-60%
+   nEvents_cent[3] = nEvents_cent[2] +
+                     nEvents_cent[1] + nEvents_cent[0]; // 0-60%
+   cout << "Number of events: " << nEvents_cent[0] << " (0-10%), "
+@@ -281,19 +255,19 @@
+       (TH3F *)pol_file->Get(Form("%s_Cent5", histName.Data())); // 40-50%
+   h3InvMassXiYvsPt_tot[2]->Add(
+       (TH3F *)pol_file->Get(Form("%s_Cent6", histName.Data()))); // 50-60%
+-/*  h3InvMassXiYvsPt_tot[2]->Add(
+-      (TH3F *)pol_file->Get(Form("%s_Cent7", histName.Data()))); // 60-70%
+-  h3InvMassXiYvsPt_tot[2]->Add(
+-      (TH3F *)pol_file->Get(Form("%s_Cent8", histName.Data()))); // 70-80%*/
++//  h3InvMassXiYvsPt_tot[2]->Add(
++//      (TH3F *)pol_file->Get(Form("%s_Cent7", histName.Data()))); // 60-70%
++//  h3InvMassXiYvsPt_tot[2]->Add(
++//      (TH3F *)pol_file->Get(Form("%s_Cent8", histName.Data()))); // 70-80%
+ 
+   h3InvMassXiYvsPt_bg[2] = (TH3F *)pol_file->Get(
+       Form("%s_%s_Cent5", histName.Data(), cutName.Data())); // 40-50%
+   h3InvMassXiYvsPt_bg[2]->Add((TH3F *)pol_file->Get(
+       Form("%s_%s_Cent6", histName.Data(), cutName.Data()))); // 50-60%
+-/*  h3InvMassXiYvsPt_bg[2]->Add((TH3F *)pol_file->Get(
+-      Form("%s_%s_Cent7", histName.Data(), cutName.Data()))); // 60-70%
+-  h3InvMassXiYvsPt_bg[2]->Add((TH3F *)pol_file->Get(
+-      Form("%s_%s_Cent8", histName.Data(), cutName.Data()))); // 70-80%*/
++//  h3InvMassXiYvsPt_bg[2]->Add((TH3F *)pol_file->Get(
++//      Form("%s_%s_Cent7", histName.Data(), cutName.Data()))); // 60-70%
++//  h3InvMassXiYvsPt_bg[2]->Add((TH3F *)pol_file->Get(
++//      Form("%s_%s_Cent8", histName.Data(), cutName.Data()))); // 70-80%
+ 
+   // 0-60%
+   h3InvMassXiYvsPt_tot[3] = (TH3F*)h3InvMassXiYvsPt_tot[0]->Clone();         // 0-10%
+@@ -310,20 +284,19 @@
+       int eta_low =
+           h3InvMassXiYvsPt_tot[icent]->GetYaxis()->FindBin(fctetaXaxis[ieta]);
+       int eta_high = h3InvMassXiYvsPt_tot[icent]->GetYaxis()->FindBin(
+-                         fctetaXaxis[ieta + 1]) - 1;
+-      if (ieta == 0)
+-        eta_low = 3;
++                         fctetaXaxis[ieta + 1]) -
++                     1;
++//      if (ieta == 0)
++//        eta_low = 3;
+       cout << "Rapidity bins (-0.8， 0.2): " << ieta << " -- " << eta_low
+            << ", " << eta_high << endl; // 3~4, 5~6, 7~8, 9~10, 11~12
+ 
+-      for (int ipt = 0; ipt < nPTBinsArr[icent][ieta]; ipt++) {
+-//        int ptBinIdx_Low = h3InvMassXiYvsPt_tot[icent]->GetXaxis()->FindBin(
+-//            fctpTXaxis[ieta][ipt]);
+-	int ptBinIdx_Low = h3InvMassXiYvsPt_tot[icent]->GetXaxis()->FindBin(pTBoundaryArr[icent][ieta][ipt]);
+-//        int ptBinIdx_High = h3InvMassXiYvsPt_tot[icent]->GetXaxis()->FindBin(
+-//                                fctpTXaxis[ieta][ipt + 1]) -
+-//                            1;
+-	int ptBinIdx_High = h3InvMassXiYvsPt_tot[icent]->GetXaxis()->FindBin(pTBoundaryArr[icent][ieta][ipt + 1]) - 1;
++      for (int ipt = 0; ipt < nPt; ipt++) {
++        int ptBinIdx_Low = h3InvMassXiYvsPt_tot[icent]->GetXaxis()->FindBin(
++            fctpTXaxis[ieta][ipt]);
++        int ptBinIdx_High = h3InvMassXiYvsPt_tot[icent]->GetXaxis()->FindBin(
++                                fctpTXaxis[ieta][ipt + 1]) -
++                            1;
+         cout << "  pT bin " << ipt << " -- " << ptBinIdx_Low << ", "
+              << ptBinIdx_High << endl;
+ 
+@@ -410,10 +383,8 @@
+   }
+ 
+   TCanvas *ca_acceptance =
+-//      new TCanvas("ca_acceptance", "Acceptance", 450 * nCentFlow, 400);
+-      new TCanvas("ca_acceptance", "Acceptance", 450 * 2, 400 * 2);
+-//  ca_acceptance->Divide(nCentFlow, 1);
+-  ca_acceptance->Divide(2, 2);
++      new TCanvas("ca_acceptance", "Acceptance", 450 * nCentFlow, 400);
++  ca_acceptance->Divide(nCentFlow, 1);
+   TCanvas *efficiencyCheck =
+       new TCanvas("efficiency_Check", "Efficiency", 450 * nCentFlow, 400);
+   efficiencyCheck->Divide(nCentFlow, 1);
+@@ -443,33 +414,6 @@
+   //==========================================================================================================================================
+   // extract Xi signal
+ 
+-	TCanvas *ca_acc_cent3 = new TCanvas("", "", 800 * 3, 900);
+-	ca_acc_cent3->Divide(3, 1);
+-	ca_acc_cent3->cd(1)->SetLogz();
+-	h2XiYvsPt_tot[3]->SetTitle("K^{*0} Acceptance");
+-	h2XiYvsPt_tot[3]->Draw("colz");
+-	h2XiYvsPt_tot[3]->GetXaxis()->SetRangeUser(-1.0, 0.4);
+-	h2XiYvsPt_tot[3]->GetYaxis()->SetRangeUser(0, 3.0);
+-	h2XiYvsPt_tot[3]->GetYaxis()->SetTitle("p_{T} [GeV/c]");
+-	h2XiYvsPt_tot[3]->GetXaxis()->SetTitle("Rapidity");
+-	ca_acc_cent3->cd(2)->SetLogz();
+-	TH2F* htmp1 = (TH2F*)pol_file->Get("hKstar0Kaon_pt_y_cent3");
+-	htmp1->SetTitle("K^{+} Acceptance");
+-	htmp1->Draw("colz");
+-	htmp1->GetXaxis()->SetRangeUser(-1.0, 0.4);
+-	htmp1->GetYaxis()->SetRangeUser(0, 3.0);
+-	htmp1->GetYaxis()->SetTitle("p_{T} [GeV/c]");
+-	htmp1->GetXaxis()->SetTitle("Rapidity");
+-	ca_acc_cent3->cd(3)->SetLogz();
+-	TH2F* htmp2 = (TH2F*)pol_file->Get("hKstar0Pion_pt_y_cent3");
+-	htmp2->SetTitle("#pi^{-} Acceptance");
+-	htmp2->GetXaxis()->SetRangeUser(-1.0, 0.4);
+-	htmp2->GetYaxis()->SetRangeUser(0, 3.0);
+-	htmp2->GetYaxis()->SetTitle("p_{T} [GeV/c]");
+-	htmp2->GetXaxis()->SetTitle("Rapidity");
+-	htmp2->Draw("colz");
+-	ca_acc_cent3->Print("../../files/checktmp.png");
+-
+   TF1 *f1_cent;
+   TF1 *f2_bg;
+   TF1 *f2_sig;
+@@ -525,7 +469,7 @@
+       cout << "######################## FITTING INVARIANT MASS BIN: "
+            << centName[icent] << " & " << etaName[ieta]
+            << " ########################" << endl;
+-      for (int ipt = 0; ipt < nPTBinsArr[icent][ieta]; ipt++) {
++      for (int ipt = 0; ipt < nPt; ipt++) {
+         double nInclLambda_r = MinvLam_EPflow_tot[icent][ieta][ipt]->Integral(
+             MinvLam_EPflow_tot[icent][ieta][ipt]->FindBin(1.2),
+             MinvLam_EPflow_tot[icent][ieta][ipt]->FindBin(1.5));
+@@ -609,12 +553,12 @@
+ 
+         IMcut_3Sigma[icent][ieta][ipt][0] = par[2] - 2.0 * par[1];
+         IMcut_3Sigma[icent][ieta][ipt][1] = par[2] + 2.0 * par[1];
+-        // if(f1_cent->GetParameter("Width") < 0.02) {
+-        IMcut_3Sigma[icent][ieta][ipt][0] =
+-            initMassMean[icent] - 2.0 * initMassWidth[icent];
+-        IMcut_3Sigma[icent][ieta][ipt][1] =
+-            initMassMean[icent] + 2.0 * initMassWidth[icent];
+-        //}
++        if(f1_cent->GetParameter("Width") < 0.02) {
++	        IMcut_3Sigma[icent][ieta][ipt][0] =
++	            initMassMean[icent] - 2.0 * initMassWidth[icent];
++	        IMcut_3Sigma[icent][ieta][ipt][1] =
++	            initMassMean[icent] + 2.0 * initMassWidth[icent];
++        }
+       }
+     }
+     //========================================================================
+@@ -705,12 +649,12 @@
+ 
+       IMcutFow_3Sigma[icent][ipt][0] = par[2] - 2.0 * par[1];
+       IMcutFow_3Sigma[icent][ipt][1] = par[2] + 2.0 * par[1];
+-//      if(f1_cent->GetParameter("Width") < 0.02) {
+-	      IMcutFow_3Sigma[icent][ipt][0] =
+-	          initMassMean[icent] - 2.0 * initMassWidth[icent];
+-	      IMcutFow_3Sigma[icent][ipt][1] =
+-	          initMassMean[icent] + 2.0 * initMassWidth[icent];
+-//      }
++      // if(f1_cent->GetParameter("Width") < 0.02) {
++      IMcutFow_3Sigma[icent][ipt][0] =
++          initMassMean[icent] - 2.0 * initMassWidth[icent];
++      IMcutFow_3Sigma[icent][ipt][1] =
++          initMassMean[icent] + 2.0 * initMassWidth[icent];
++      //}
+     }
+     //========================================================================
+ 
+@@ -827,7 +771,7 @@
+   }
+   for (int icent = 0; icent < nCentFlow; icent++) {
+     for (int ieta = 0; ieta < nEta; ieta++) {
+-      for (int ipt = 0; ipt < nPTBinsArr[icent][ieta]; ipt++) {
++      for (int ipt = 0; ipt < nPt; ipt++) {
+ /*
+ 	if(ieta == 0 && icent == 0) {
+ 		continue;
+@@ -902,7 +846,7 @@
+         TLatex *tex_phi =
+             new TLatex(1.1, 0.65 * upperEdgeY,
+                        Form("%4.2f < p_{T} < %4.2f GeV/c",
+-                            pTBoundaryArr[icent][ieta][ipt], pTBoundaryArr[icent][ieta][ipt + 1]));
++                            fctpTXaxis[ieta][ipt], fctpTXaxis[ieta][ipt + 1]));
+         tex_phi->SetTextFont(42);
+         tex_phi->SetTextSize(0.04);
+         tex_phi->Draw("same");
+@@ -988,6 +932,7 @@
+         lineLFit->SetLineStyle(2);
+         lineLFit->SetLineWidth(2);
+         lineLFit->Draw("SAME");
++	MinvLam_EPflowReal_sig[icent][ieta][ipt]->GetListOfFunctions()->Add(lineLFit);
+ 
+         TLine *lineRFit =
+             new TLine(IMcut_3Sigma[icent][ieta][ipt][1], lowerEdgeY,
+@@ -996,6 +941,7 @@
+         lineRFit->SetLineStyle(2);
+         lineRFit->SetLineWidth(2);
+         lineRFit->Draw("SAME");
++	MinvLam_EPflowReal_sig[icent][ieta][ipt]->GetListOfFunctions()->Add(lineRFit);
+ 
+         int lowerMassBin_Kstar0 =
+             MinvLam_EPflowReal_sig[icent][ieta][ipt]->FindBin(
+@@ -1068,11 +1014,8 @@
+         if (!eff) {
+           eff_weight = 1.0;
+         } else {
+-		eff_weight = getEfficiency(icent, fctetaXaxis[ieta], fctetaXaxis[ieta + 1], pTBoundaryBuffer[icent][ieta][ipt], pTBoundaryBuffer[icent][ieta][ipt + 1]);
+-		std::cout << "eff at cent: " << icent << " eta: " << ieta << " ipt: " << ipt << " eff == " << eff_weight << std::endl;
+-//          eff_weight =
+-//		1. / EfficiencyBigRange[icent]->GetBinContent(EfficiencyBigRange[icent]->FindBin((fctetaXaxis[ieta] + fctetaXaxis[ieta + 1]) / 2, (pTBoundaryArr[icent][ieta][ipt] + pTBoundaryArr[icent][ieta][ipt + 1]) / 2));
+-//              1. / EfficiencyBigRange[icent]->GetBinContent(ieta + 1, ipt + 1);
++          eff_weight =
++              1. / EfficiencyBigRange[icent]->GetBinContent(ieta + 1, ipt + 1);
+         }
+ 
+         nXiYield[icent][ieta][ipt] = nSignal * eff_weight;
+@@ -1082,7 +1025,8 @@
+           if (debug) {
+             std::cout << "zla ipt == " << ipt << " ieta == " << ieta
+                       << " eff_weight == "
+-                      << EfficiencyBigRange[icent]->GetBinContent(EfficiencyBigRange[icent]->FindBin((fctetaXaxis[ieta] + fctetaXaxis[ieta + 1]) / 2, (pTBoundaryArr[icent][ieta][ipt] + pTBoundaryArr[icent][ieta][ipt + 1]) / 2))
++                      << EfficiencyBigRange[icent]->GetBinContent(ieta + 1,
++                                                                  ipt + 1)
+                       << " nsignal == " << nSignal
+                       << " yield == " << nXiYield[icent][ieta][ipt]
+                       << std::endl;
+@@ -1137,79 +1081,6 @@
+   }
+   //==========================================================================================================================================
+   // rapidity bin: (-1.0, -0.8)
+-
+-//zla start
+-	TCanvas *cMean = new TCanvas("Mean", "Mean", 4 * 800, 2 * 600);
+-	cMean->Divide(4, 2);
+-	TH1F *mMean[4][nEta];
+-	TH1F *mGamma[4][nEta];
+-	float meanValue[4] = { 0.886, 0.886, 0.887, 0.887 };
+-	float meanErr[4] = { 0.004, 0.003, 0.002, 0.002 };
+-	for(int icent = 0; icent < 4; ++icent) {
+-		cMean->cd(icent + 1);
+-		for(int irap = 0; irap < nEta; ++irap) {
+-			mMean[icent][irap] = new TH1F(Form("Mean_cent%i_rap%i", icent, irap), Form("Cent%i Mean trend by p_{T}", icent), nPTBinsArr[icent][irap], pTBoundaryBuffer[icent][irap]);
+-			mMean[icent][irap]->SetLineColor(colorIndex[irap]);
+-//			mMean[icent][irap]->SetMarkerSize(2);
+-			mMean[icent][irap]->SetMarkerColor(colorIndex[irap]);
+-			mMean[icent][irap]->SetStats(0);
+-			mMean[icent][irap]->GetYaxis()->SetRangeUser(0.85, 0.92);
+-			for(int ipt = 0; ipt < nPTBinsArr[icent][irap]; ++ipt) {
+-				mMean[icent][irap]->SetBinContent(ipt + 1, FitQuality[icent][irap][ipt][2]);
+-				mMean[icent][irap]->SetBinError(ipt + 1, FitQuality[icent][irap][ipt][3]);
+-			}
+-
+-			TLine *lineMean = new TLine(0.2, meanValue[icent], 2, meanValue[icent]);
+-			TLine *lineHighter = new TLine(0.2, meanValue[icent] + meanErr[icent], 2, meanValue[icent] + meanErr[icent]);
+-			TLine *lineLower = new TLine(0.2, meanValue[icent] - meanErr[icent], 2, meanValue[icent] - meanErr[icent]);
+-			TLine *lineMass = new TLine(0.2, 0.895611, 2, 0.895611);
+-			lineMass->SetLineStyle(2);
+-			lineMean->SetLineColor(kGreen);
+-			lineMean->SetLineStyle(2);
+-			lineHighter->SetLineColor(kRed);
+-			lineLower->SetLineColor(kRed);
+-			lineHighter->SetLineStyle(2);
+-			lineLower->SetLineStyle(2);
+-
+-			TLatex *msg = new TLatex(1, 0.91, Form("#mu = %.3f #pm %.3f", meanValue[icent], meanErr[icent]));
+-
+-			if(irap == 0) {
+-				mMean[icent][irap]->Draw("ep");
+-			} else {
+-				mMean[icent][irap]->Draw("sameep");
+-			}
+-			lineMean->Draw("same");
+-			lineHighter->Draw("same");
+-			lineLower->Draw("same");
+-			lineMass->Draw("same");
+-	 		msg->Draw("same");
+-		}
+-		cMean->cd(5 + icent);
+-		for(int irap = 0; irap < nEta; ++irap) {
+-			TLine *lineGamma = new TLine(0.2, initMassWidth[icent], 2, initMassWidth[icent]);
+-			lineGamma->SetLineColor(kGreen);
+-			lineGamma->SetLineStyle(2);
+-			mGamma[icent][irap] = new TH1F(Form("Gamma_cent%i_rap%i", icent, irap), Form("Cent%i Gamma trend by p_{T}", icent), nPTBinsArr[icent][irap], pTBoundaryBuffer[icent][irap]);
+-			for(int ipt = 0; ipt < nPTBinsArr[icent][irap]; ++ipt) {
+-				mGamma[icent][irap]->SetBinContent(ipt + 1, FitQuality[icent][irap][ipt][4]);
+-				mGamma[icent][irap]->SetBinError(ipt + 1, FitQuality[icent][irap][ipt][5]);
+-			}
+-			mGamma[icent][irap]->SetLineColor(colorIndex[irap]);
+-			mGamma[icent][irap]->GetYaxis()->SetRangeUser(0.02, 0.08);
+-			mGamma[icent][irap]->SetStats(0);
+-			TLatex *msg = new TLatex(1, 0.07, Form("#Gamma = %.3f #pm %.3f", initMassWidth[icent], initMassWidthErr[icent]));
+-			if(irap == 0) {
+-				mGamma[icent][irap]->Draw("ep");
+-			} else {
+-				mGamma[icent][irap]->Draw("sameep");
+-			}
+-			lineGamma->Draw("same");
+-			msg->Draw("same");
+-		}
+-	}
+-	cMean->Print(Form("../../files/plots_%s/Mean_Trend.png", cutName.Data()));
+-//zla end
+-
+   double nXiYieldFow[nCentFlow][nPtFow] = {0.};
+   double nXiYieldErrFow[nCentFlow][nPtFow] = {0.};
+   TCanvas *ca_invMassFow[nCentFlow];
+@@ -1391,8 +1262,7 @@
+       if (!eff) {
+         eff_weight = 1.;
+       } else {
+-	eff_weight = 1.;
+-//        eff_weight = 1. / EfficiencyFow[icent]->GetBinContent(1, ipt + 1);
++        eff_weight = 1. / EfficiencyFow[icent]->GetBinContent(1, ipt + 1);
+       }
+ 
+       nXiYieldFow[icent][ipt] = nSignal * eff_weight;
+@@ -1636,8 +1506,7 @@
+       if (!eff) {
+         eff_weight = 1.0;
+       } else {
+-	eff_weight = 1.;
+-//        eff_weight = 1. / EfficiencyMid[icent]->GetBinContent(1, ipt + 1);
++        eff_weight = 1. / EfficiencyMid[icent]->GetBinContent(1, ipt + 1);
+       }
+ 
+       nXiYieldMid[icent][ipt] = nSignal * eff_weight;
+@@ -1702,7 +1571,7 @@
+   // get spectrum, merge all rapidity bins !!!
+   // mid rapidity may have different pT bins
+ 
+-/*  float ptBinArr[nEta][nPt + 1];
++  float ptBinArr[nEta][nPt + 1];
+   float mtBinArr[nEta][nPt + 1];
+   for (int ieta = 0; ieta < nEta; ieta++) {
+     for (int ipt = 0; ipt < nPt + 1; ipt++) {
+@@ -1713,23 +1582,7 @@
+       cout << "mT bin edge is :::::" << mtBinArr[ieta][ipt] << "    ";
+     }
+     cout << endl;
+-  */
+-
+-	const float *ptBinArr[nCentFlow][nEta];
+-	float mtBinArr[nCentFlow][nEta][nPt + 1];
+-	//ptBinArr = pTBoundaryArr;
+-	for(int icent = 0; icent < nCentFlow; ++icent) {
+-		for(int ieta = 0; ieta < nEta; ++ieta) {
+-			ptBinArr[icent][ieta] = pTBoundaryArr[icent][ieta];
+-			for(int ipt = 0; ipt < nPTBinsArr[icent][ieta] + 1; ++ipt) {
+-				mtBinArr[icent][ieta][ipt] = sqrt(ptBinArr[icent][ieta][ipt] * ptBinArr[icent][ieta][ipt] + ximass * ximass) - ximass;
+-//				if(icent == 0) {
+-//					std::cout << "mtBinArr boundary: " << mtBinArr[icent][ieta][ipt] << " ieta: " << ieta << " ipt: " << ipt << std::endl;
+-//				}
+-			}
+-		}
+-	}
+-
++  }
+   // Fow rapidity
+   float ptBinArrFow[nPtFow + 1];
+   float mtBinArrFow[nPtFow + 1];
+@@ -1929,42 +1782,41 @@
+       } else {
+         int nieta = ieta - 1;
+         hXiYieldVsPt[icent][ieta] =
+-            new TH1F(Form("hXiYieldVsPt_cent%d_Y%d", icent, ieta), "", nPTBinsArr[icent][nieta],
+-                     ptBinArr[icent][nieta]);
++            new TH1F(Form("hXiYieldVsPt_cent%d_Y%d", icent, ieta), "", nPt,
++                     ptBinArr[nieta]);
+         hXiYieldVsPt[icent][ieta]->Sumw2();
+         hXiYieldVsMt[icent][ieta] =
+             new TH1F(Form("hXiYieldVsMt_cent%d_Y%d", icent, ieta), "", nPt,
+-                     mtBinArr[icent][nieta]);
++                     mtBinArr[nieta]);
+         hXiYieldVsMt[icent][ieta]->Sumw2();
+ 
+         hXiYieldVsPt_raw[icent][ieta] =
+-            new TH1F(Form("hXiYieldVsPt_raw_cent%d_Y%d", icent, ieta), "", nPTBinsArr[icent][nieta],
+-                     ptBinArr[icent][nieta]);
++            new TH1F(Form("hXiYieldVsPt_raw_cent%d_Y%d", icent, ieta), "", nPt,
++                     ptBinArr[nieta]);
+         hXiYieldVsPt_raw[icent][ieta]->Sumw2();
+         hXiYieldVsMt_raw[icent][ieta] =
+             new TH1F(Form("hXiYieldVsMt_raw_cent%d_Y%d", icent, ieta), "", nPt,
+-                     mtBinArr[icent][nieta]);
++                     mtBinArr[nieta]);
+         hXiYieldVsMt_raw[icent][ieta]->Sumw2();
+ 
+         hXidNdpT[ieta][icent] = new TH1F(
+-            Form("hXidNdpT_Y%d_cent%d", ieta, icent), "", nPTBinsArr[icent][nieta], ptBinArr[icent][nieta]);
++            Form("hXidNdpT_Y%d_cent%d", ieta, icent), "", nPt, ptBinArr[nieta]);
+         hXidNdpT[ieta][icent]->Sumw2();
+ 
+-//        for (int ipt = 0; ipt < nPt; ipt++) {
+-        for (int ipt = 0; ipt < nPTBinsArr[icent][nieta]; ipt++) {
++        for (int ipt = 0; ipt < nPt; ipt++) {
+           hXiYieldVsPt_raw[icent][ieta]->SetBinContent(
+               ipt + 1,
+               nXiYield[icent][nieta][ipt] /
+-                  (ptBinArr[icent][nieta][ipt + 1] - ptBinArr[icent][nieta][ipt])); // dN/dpT
++                  (ptBinArr[nieta][ipt + 1] - ptBinArr[nieta][ipt])); // dN/dpT
+           hXiYieldVsPt_raw[icent][ieta]->SetBinError(
+               ipt + 1, nXiYieldErr[icent][nieta][ipt] /
+-                           (ptBinArr[icent][nieta][ipt + 1] - ptBinArr[icent][nieta][ipt]));
++                           (ptBinArr[nieta][ipt + 1] - ptBinArr[nieta][ipt]));
+ 
+           float binCenter =
+-              0.5 * (ptBinArr[icent][nieta][ipt] + ptBinArr[icent][nieta][ipt + 1]);
++              0.5 * (ptBinArr[nieta][ipt] + ptBinArr[nieta][ipt + 1]);
+           float yieldPt = nXiYield[icent][nieta][ipt] / br / 2 / rapiditywidth /
+                           TMath::Pi() / nEvents_cent[icent] / binCenter /
+-                          (ptBinArr[icent][nieta][ipt + 1] - ptBinArr[icent][nieta][ipt]) *
++                          (ptBinArr[nieta][ipt + 1] - ptBinArr[nieta][ipt]) *
+                           scaler4Show[ieta];
+           float yieldPtErr = yieldPt * nXiYieldErr[icent][nieta][ipt] /
+                              nXiYield[icent][nieta][ipt];
+@@ -1976,15 +1828,15 @@
+           hXiYieldVsMt_raw[icent][ieta]->SetBinContent(
+               ipt + 1,
+               nXiYield[icent][nieta][ipt] /
+-                  (mtBinArr[icent][nieta][ipt + 1] - mtBinArr[icent][nieta][ipt])); // dN/dmT
++                  (mtBinArr[nieta][ipt + 1] - mtBinArr[nieta][ipt])); // dN/dmT
+           hXiYieldVsMt_raw[icent][ieta]->SetBinError(
+               ipt + 1, nXiYieldErr[icent][nieta][ipt] /
+-                           (mtBinArr[icent][nieta][ipt + 1] - mtBinArr[icent][nieta][ipt]));
++                           (mtBinArr[nieta][ipt + 1] - mtBinArr[nieta][ipt]));
+ 
+           float binCenterMt = sqrt(binCenter * binCenter + ximass * ximass);
+           float yieldMt = nXiYield[icent][nieta][ipt] / br / 2 / rapiditywidth /
+                           TMath::Pi() / nEvents_cent[icent] / binCenterMt /
+-                          (mtBinArr[icent][nieta][ipt + 1] - mtBinArr[icent][nieta][ipt]) *
++                          (mtBinArr[nieta][ipt + 1] - mtBinArr[nieta][ipt]) *
+                           scaler4Show[ieta];
+           cout << "mT and pT, check:     " << yieldMt << " : " << yieldPt
+                << endl;
+@@ -1995,7 +1847,7 @@
+           hXiYieldVsMt[icent][ieta]->SetBinContent(
+               ipt + 1,
+               yieldMt); // 1/(B.R. N_{ev}2#pim_{T})dN^{2}/dm_{T}dy (GeV/c)^{-2}
+-//		std::cout << "pass 111 fill content: " << yieldMt << "icent: " << icent << " ieta: " << ieta << " ipt: " << ipt << std::endl;
++		std::cout << "pass 111 fill content: " << yieldPt << " ieta: " << ieta << " ipt: " << ipt << std::endl;
+           hXiYieldVsMt[icent][ieta]->SetBinError(ipt + 1, yieldMtErr);
+ 
+           hXidNdpT[ieta][icent]->SetBinContent(
+@@ -2067,8 +1919,9 @@
+         1e-2 * hXidNdpT[nTotEta - 1][icent]->GetBinContent(
+                    hXidNdpT[nTotEta - 1][icent]->GetMinimumBin()),
+         2.5,
+-        2 * hXidNdpT[nTotEta - 1][icent]->GetBinContent(
+-                hXidNdpT[nTotEta - 1][icent]->GetMaximumBin()));
++//        2 * hXidNdpT[nTotEta - 1][icent]->GetBinContent(
++//                hXidNdpT[nTotEta - 1][icent]->GetMaximumBin()));
++	pow(10, -2.5));
+     SetAxis(ax, 1, 1);
+     ax->SetYTitle("K^{*0} dN/dp_{T}/dy");
+     ax->SetXTitle("p_{T} [GeV/c]");
+@@ -2082,7 +1935,6 @@
+     legT->SetTextFont(42);
+     legT->SetTextSize(0.03);
+     legT->SetHeader(centName[icent].Data());
+-    legT->Draw("same");
+ 
+     for (int ieta = 0; ieta < nTotEta; ieta++) {
+ 
+@@ -2102,7 +1954,7 @@
+ 	f1_Levy_dpt->SetParameters(1.44327e-04, 4.58379e+06, 1.82213e-01, 0.89594);
+ 	f1_Levy_dpt->FixParameter(3, 0.89594);
+ 
+-      f1_exp = new TF1("f1_exp", fitFuncExp, 0, 3.0, 2); //[0]*exp(-x/[1])*x
++      f1_exp = new TF1("f1_exp", fitFuncExp, 0, 2.5, 2); //[0]*exp(-x/[1])*x
+       f1_exp->SetParNames("Scale1", "Temperature");
+       f1_exp->SetParameters(1.5e-03, 0.12);
+       f1_exp->SetLineColor(colorIndex[ieta]);
+@@ -2112,18 +1964,11 @@
+       hXidNdpT[ieta][icent]->Fit("f1_BW_dpt", "RMN", "",
+                                  RapiditypTLow[ieta][icent],
+                                  RapiditypTHigh[ieta][icent]);
+-	if(icent == 1) {
+-		f1_exp->SetParameters(1.5e-03, 3.53366e-01);
+-	} else if(icent == 0) {
+-		f1_exp->SetParameters(1.5e-03, 3.43623e-01);
+-	} else if(icent == 3) {
+-		f1_exp->SetParameters(1.5e-03, 3.09419e-01);
+-	}
+-            hXidNdpT[ieta][icent]->Fit("f1_exp", "IRMN", "",
++            hXidNdpT[ieta][icent]->Fit("f1_exp", "RMN", "",
+                                        RapiditypTLow[ieta][icent],
+                                        RapiditypTHigh[ieta][icent]);
+ //	hXidNdpT[ieta][icent]->Fit("f1_Levy_dpt", "RMN", "", RapiditypTLow[ieta][icent], RapiditypTHigh[ieta][icent]);
+-//            f1_exp->Draw("SAME");
++      //      f1_exp->Draw("SAME");
+       f1_BW_dpt->Draw("SAME");
+ 	//f1_Levy_dpt->Draw("same");
+ 
+@@ -2150,7 +1995,7 @@
+                   0, sqrt(3 * 3 + ximass * ximass) - ximass);
+       ptmptexp[icent][ieta]->SetParameters(
+           parExp[0] * scaler4Show[ieta], parExp[1],
+-          0.89594); // here 0.2 represents rapidity width
++          ximass); // here 0.2 represents rapidity width
+ 
+       //	ptmptBW[icent][ieta] = new TF1(Form("ptmptBW_cent%d_y%d", icent,
+       // ieta), ,
+@@ -2209,8 +2054,7 @@
+         }
+       } else {
+         int nieta = ieta - 1;
+-//        for (int ipt = 0; ipt < nPt; ipt++) {
+-        for (int ipt = 0; ipt < nPTBinsArr[icent][ieta]; ipt++) {
++        for (int ipt = 0; ipt < nPt; ipt++) {
+           float ptbinwidth = ptBinArr[nieta][ipt + 1] - ptBinArr[nieta][ipt];
+           dNdy += hXidNdpT[ieta][icent]->GetBinContent(ipt + 1) * ptbinwidth *
+                   2 * TMath::Pi();
+@@ -2245,8 +2089,6 @@
+       hXidNdpT[ieta][icent]->SetMarkerSize(1.0);
+       hXidNdpT[ieta][icent]->SetMarkerColor(colorIndex[ieta]);
+       hXidNdpT[ieta][icent]->SetLineColor(colorIndex[ieta]);
+-//	f1_exp->Draw("same");
+-//	f1_exp->SetLineColor(colorIndex[ieta]);
+ //	f1_Levy_dpt->Draw("same");
+ //	f1_Levy_dpt->SetLineColor(colorIndex[ieta]);
+       f1_BW_dpt->Draw("SAME");
+@@ -2254,7 +2096,7 @@
+       legT->AddEntry(hXidNdpT[ieta][icent], Form("%s", etaNameTot[ieta].Data()),
+                      "lp");
+     }
+-//    legT->Draw("same");
++    legT->Draw("same");
+   }
+   ca_dNdpTdy->cd();
+   ca_dNdpTdy->Print(
+@@ -2364,8 +2206,7 @@
+       } else {
+         rapiditywidthTot = rapiditywidth;
+         int nieta = ieta - 1;
+-//        for (int ipt = 0; ipt < nPt; ipt++) {
+-        for (int ipt = 0; ipt < nPTBinsArr[icent][ieta]; ipt++) {
++        for (int ipt = 0; ipt < nPt; ipt++) {
+           float ptbinwidth = ptBinArr[nieta][ipt + 1] - ptBinArr[nieta][ipt];
+           dNdy += hXiYieldVsPt_raw[icent][ieta]->GetBinContent(ipt + 1) *
+                   ptbinwidth / rapiditywidthTot;
+@@ -2509,7 +2350,7 @@
+                temperature[icent][ieta], temperatureErr[icent][ieta]),
+           "lp");
+     }
+-//    legT->Draw();
++    legT->Draw();
+ 
+     TLegend *leg = new TLegend(0.6, 0.8, 0.85, 0.92);
+     leg->SetFillColor(10);
+@@ -2649,9 +2490,9 @@
+   for (int icent = 0; icent < nCentFlow; icent++) {
+     //    hXidNdy[icent] = new TH1F(Form("hXidNdy_icent%d", icent), "", 5, -0.8,
+     //    0.2);
+-    hXidNdy[icent] = new TH1F(Form("hXidNdy_icent%d", icent), "", 8, -0.8, 0.8);
++    hXidNdy[icent] = new TH1F(Form("hXidNdy_icent%d", icent), "", 10, -1.0, 1.0);
+     hXidNdy_rf[icent] =
+-        new TH1F(Form("hXidNdy_rf_icent%d", icent), "", 4, 0, 0.8);
++        new TH1F(Form("hXidNdy_rf_icent%d", icent), "", 5, 0, 1.0);
+     hXidNdy_Mid[icent] =
+         new TH1F(Form("hXidNdy_Mid_icent%d", icent), "", 1, fctetaXaxisMid);
+   }
+@@ -2661,17 +2502,17 @@
+     //      hXidNdy[icent]->SetBinContent(ieta+1, xiYield_int[icent][ieta]);
+     //      hXidNdy[icent]->SetBinError(ieta+1, xiYieldErr_int[icent][ieta]);
+     //    }
+-    for (int ieta = 0; ieta < 4; ieta++) {
++    for (int ieta = 0; ieta < 5; ieta++) {
+       hXidNdy[icent]->SetBinContent(ieta + 1, xiYield_int[icent][ieta + 1]);
+       //		std::cout << "zla check icent == " << icent << " ieta ==
+       //" << ieta << " yield == " << xiYield_int[icent][ieta] << std::endl;
+       hXidNdy[icent]->SetBinError(ieta + 1, xiYieldErr_int[icent][ieta + 1]);
+     }
+-    for (int ieta = 0; ieta < 4; ieta++) {
++    for (int ieta = 0; ieta < 5; ieta++) {
+       hXidNdy_rf[icent]->SetBinContent(ieta + 1,
+-                                       xiYield_int[icent][3 - ieta + 1]);
++                                       xiYield_int[icent][4 - ieta + 1]);
+       hXidNdy_rf[icent]->SetBinError(ieta + 1,
+-                                     xiYieldErr_int[icent][3 - ieta + 1]);
++                                     xiYieldErr_int[icent][4 - ieta + 1]);
+ 
+       // hXidNdy[icent]->SetBinContent(ieta+5, xiYield_int[icent][3-ieta]);
+       // hXidNdy[icent]->SetBinError(ieta+5, xiYieldErr_int[icent][3-ieta]);
+@@ -2801,15 +2642,15 @@
+       ptdptexp[icent][ieta]->Write();
+       ptmptexp[icent][ieta]->Write();
+ 	ptBW[icent][ieta]->Write();
+-        if(ieta > nEta) {
+-                continue;
+-        }
+-        for(int ipt = 0; ipt < nPTBinsArr[icent][ieta]; ++ipt) {
+-                MinvLam_EPflowReal_sig[icent][ieta][ipt]->SetName(Form("hSigFit_cent%i_rap%i_pt%i", icent, ieta, ipt));
+-                MinvLam_EPflowReal_sig[icent][ieta][ipt]->Write();
+-                fMinvLam_EPflow_sig[icent][ieta][ipt]->SetName(Form("fSigFit_cent%i_rap%i_pt%i", icent, ieta, ipt));
+-                fMinvLam_EPflow_sig[icent][ieta][ipt]->Write();
+-        }
++	if(ieta > nEta) {
++		continue;
++	}
++	for(int ipt = 0; ipt < nPt; ++ipt) {
++		MinvLam_EPflowReal_sig[icent][ieta][ipt]->SetName(Form("hSigFit_cent%i_rap%i_pt%i", icent, ieta, ipt));
++		MinvLam_EPflowReal_sig[icent][ieta][ipt]->Write();
++		fMinvLam_EPflow_sig[icent][ieta][ipt]->SetName(Form("fSigFit_cent%i_rap%i_pt%i", icent, ieta, ipt));
++		fMinvLam_EPflow_sig[icent][ieta][ipt]->Write();
++	}
+     }
+   }
+ 

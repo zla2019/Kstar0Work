@@ -85,7 +85,7 @@ TH1F* SubtractBGFn( TH1F* hin, TF1* fbg, float xminFn, float xmaxFn ){
   return hout;
 }
 
-void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
+void plot_Kstar0InvMass_CheckRapDepend(const bool isKstar0 = 1, float *massWidth = nullptr, float *massWidthErr = nullptr, const float * const raplimit = nullptr) {
     //EPD + TPC alignment along Z direction
     //    Inner      EPD       Outer                         TPC
     //-5.3 A -4.05 B -3.3 C -2.9 D -2.6         -2.0 A -1.1 eta-gap -1.0 B 0
@@ -104,16 +104,18 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
     
     if(!isKstar0) { particle = "AntiKstar0"; histName = "NumAntiKstar0InvMassvsPtY"; }
     
-//    TFile *pol_file   = TFile::Open("/home/zla/tmp/19151031.root_TPCandTOF_hist.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/tmp/massCheck_rotation.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix20211013.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix_20211017.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix_20211024.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/data/TPCandTOF_hist_Mix.root");
-    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/embedding_data/embedding_Rec_20211101.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix_my_20211025.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix_20211023_part1.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/massCheck_rotation2.root");
+    //TFile *pol_file   = TFile::Open("kstar0_3gev_TPCorTOF_spinYmp5to0_flowYmp8to0_ana_hist.root");
+//    TFile *pol_file   = TFile::Open("kstar0_3gev_TPCandTOF_spinYmp5to0_flowYmp8to0_ana_hist.root");
+//    TFile *pol_file   = TFile::Open("19154032_5000010_kstar0Tree_TPCorTOF_hist_Aug12.root");
+//    TFile *pol_file   = TFile::Open("Kstar0_20210823_embedding.root");
+    TFile *pol_file   = TFile::Open("../../KstarRealData_binning12.root");
+//    TFile *pol_file   = TFile::Open("../../Kstar0_mixkaon.root");
+//    TFile *pol_file   = TFile::Open("../../tar0Tree.root_TPCandTOF_hist_Aug12.root");
+//    TFile *pol_file   = TFile::Open("../../ReconstructionKstarInfo_v6.root");
+//    TFile *pol_file   = TFile::Open("../../KstarMCRecMassCheck.root");
+//    TFile *pol_file   = TFile::Open("../../tar0Tree.root_TPCandTOF_hist.root");
+//    TFile *pol_file   = TFile::Open("../../KstarMCRecMassCheck.root");
+//    TFile *pol_file   = TFile::Open("../../KstarRot.root");
 //    TFile *pol_file   = TFile::Open("../../Kstar0_realData_binning1_20210831.root");
 //    TFile *pol_file   = TFile::Open("../../KstarMassWidthCheck.root");
 //    TFile *pol_file   = TFile::Open("../../Kstar0_20210824_RealData_TPCandTOF.root");
@@ -182,7 +184,15 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
     h3InvMassXiYvsPt_bg[3]->Add( h3InvMassXiYvsPt_bg[1] ); //10-40%
     h3InvMassXiYvsPt_bg[3]->Add( h3InvMassXiYvsPt_bg[2] ); //40-60%
     
-    int lowEtaBin = ((TH1F*)h3InvMassXiYvsPt_tot[0]->ProjectionY())->FindBin(-0.5), highEtaBin = ((TH1F*)h3InvMassXiYvsPt_tot[0]->ProjectionY())->FindBin(0); //-0.5 < y < 0
+	float upperlimit, lowerlimit;
+	if(raplimit) {
+		lowerlimit = raplimit[0];
+		upperlimit = raplimit[1];
+	} else {
+		lowerlimit = -0.5;
+		upperlimit = 0;
+	}
+    int lowEtaBin = ((TH1F*)h3InvMassXiYvsPt_tot[0]->ProjectionY())->FindBin(lowerlimit), highEtaBin = ((TH1F*)h3InvMassXiYvsPt_tot[0]->ProjectionY())->FindBin(upperlimit); //-0.5 < y < 0
     int ptBinIdx_Low  = ((TH1F*)h3InvMassXiYvsPt_tot[0]->ProjectionX())->FindBin(0.4), ptBinIdx_High = ((TH1F*)h3InvMassXiYvsPt_tot[0]->ProjectionX())->FindBin(2.0); // 0.4 < pT < 2.0
     for(int icent=0; icent<nCent; icent++) {
         invMassVsCent_tot[icent]   = (TH1F*)h3InvMassXiYvsPt_tot[icent]->ProjectionZ(Form("sig_Cent%d", icent), ptBinIdx_Low, ptBinIdx_High, lowEtaBin, highEtaBin);
@@ -264,8 +274,8 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
     for(int icent=0; icent<nCent; icent++) {
         ca_invMass->cd(icent+1);
         
-        double nInclKstar0_r = invMassVsCent_tot[icent]->Integral(invMassVsCent_tot[icent]->FindBin(1.1), invMassVsCent_tot[icent]->FindBin(1.2));//1.2, 1.5
-        double nBgKstar0_r   = invMassVsCent_bg[icent]->Integral(invMassVsCent_bg[icent]->FindBin(1.1), invMassVsCent_bg[icent]->FindBin(1.2));//1.2, 1.5
+        double nInclKstar0_r = invMassVsCent_tot[icent]->Integral(invMassVsCent_tot[icent]->FindBin(1.2), invMassVsCent_tot[icent]->FindBin(1.5));//1.2, 1.5
+        double nBgKstar0_r   = invMassVsCent_bg[icent]->Integral(invMassVsCent_bg[icent]->FindBin(1.2), invMassVsCent_bg[icent]->FindBin(1.5));//1.2, 1.5
         double nInclKstar0_l = invMassVsCent_tot[icent]->Integral(invMassVsCent_tot[icent]->FindBin(0.6), invMassVsCent_tot[icent]->FindBin(0.8));
         double nBgKstar0_l   = invMassVsCent_bg[icent]->Integral(invMassVsCent_bg[icent]->FindBin(0.6), invMassVsCent_bg[icent]->FindBin(0.8));
         scaler[icent] = nInclKstar0_r / nBgKstar0_r;
@@ -463,6 +473,10 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
         tex_gamma->SetTextFont(42);
         tex_gamma->SetTextSize(0.04);
         tex_gamma->Draw("same");
+	if(massWidth && icent == 3) {
+		massWidth[0] = par[1];
+		massWidthErr[0] = parErr[1];
+	}
         
         TLatex *tex_signif = new TLatex(0.76, 0.15*upperEdgeY, Form("S / #sqrt{S+B} = %6.0f / %4.0f = %6.2f", nSignal, sqrt(nTotal), nSignal/sqrt(nTotal)));
         tex_signif->SetTextFont(42);

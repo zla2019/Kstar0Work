@@ -85,7 +85,7 @@ TH1F* SubtractBGFn( TH1F* hin, TF1* fbg, float xminFn, float xmaxFn ){
   return hout;
 }
 
-void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
+void plot_Kstar0InvMass_FromEmbedding(const bool isKstar0 = 1) {
     //EPD + TPC alignment along Z direction
     //    Inner      EPD       Outer                         TPC
     //-5.3 A -4.05 B -3.3 C -2.9 D -2.6         -2.0 A -1.1 eta-gap -1.0 B 0
@@ -104,16 +104,18 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
     
     if(!isKstar0) { particle = "AntiKstar0"; histName = "NumAntiKstar0InvMassvsPtY"; }
     
-//    TFile *pol_file   = TFile::Open("/home/zla/tmp/19151031.root_TPCandTOF_hist.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/tmp/massCheck_rotation.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix20211013.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix_20211017.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix_20211024.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/data/TPCandTOF_hist_Mix.root");
-    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/embedding_data/embedding_Rec_20211101.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix_my_20211025.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix_20211023_part1.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/massCheck_rotation2.root");
+    //TFile *pol_file   = TFile::Open("kstar0_3gev_TPCorTOF_spinYmp5to0_flowYmp8to0_ana_hist.root");
+//    TFile *pol_file   = TFile::Open("kstar0_3gev_TPCandTOF_spinYmp5to0_flowYmp8to0_ana_hist.root");
+//    TFile *pol_file   = TFile::Open("19154032_5000010_kstar0Tree_TPCorTOF_hist_Aug12.root");
+//    TFile *pol_file   = TFile::Open("Kstar0_20210823_embedding.root");
+//    TFile *pol_file   = TFile::Open("../../KstarRealData_binning12.root");
+//    TFile *pol_file   = TFile::Open("../../Kstar0_mixkaon.root");
+//    TFile *pol_file   = TFile::Open("../../tar0Tree.root_TPCandTOF_hist_Aug12.root");
+    TFile *pol_file   = TFile::Open("../../ReconstructionKstarInfo_v6.root");
+//    TFile *pol_file   = TFile::Open("../../KstarMCRecMassCheck.root");
+//    TFile *pol_file   = TFile::Open("../../tar0Tree.root_TPCandTOF_hist.root");
+//    TFile *pol_file   = TFile::Open("../../KstarMCRecMassCheck.root");
+//    TFile *pol_file   = TFile::Open("../../KstarRot.root");
 //    TFile *pol_file   = TFile::Open("../../Kstar0_realData_binning1_20210831.root");
 //    TFile *pol_file   = TFile::Open("../../KstarMassWidthCheck.root");
 //    TFile *pol_file   = TFile::Open("../../Kstar0_20210824_RealData_TPCandTOF.root");
@@ -183,55 +185,12 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
     h3InvMassXiYvsPt_bg[3]->Add( h3InvMassXiYvsPt_bg[2] ); //40-60%
     
     int lowEtaBin = ((TH1F*)h3InvMassXiYvsPt_tot[0]->ProjectionY())->FindBin(-0.5), highEtaBin = ((TH1F*)h3InvMassXiYvsPt_tot[0]->ProjectionY())->FindBin(0); //-0.5 < y < 0
-    int ptBinIdx_Low  = ((TH1F*)h3InvMassXiYvsPt_tot[0]->ProjectionX())->FindBin(0.4), ptBinIdx_High = ((TH1F*)h3InvMassXiYvsPt_tot[0]->ProjectionX())->FindBin(2.0); // 0.4 < pT < 2.0
+    int ptBinIdx_Low  = ((TH1F*)h3InvMassXiYvsPt_tot[0]->ProjectionX())->FindBin(1.8), ptBinIdx_High = ((TH1F*)h3InvMassXiYvsPt_tot[0]->ProjectionX())->FindBin(2.); // 0.4 < pT < 2.0
     for(int icent=0; icent<nCent; icent++) {
         invMassVsCent_tot[icent]   = (TH1F*)h3InvMassXiYvsPt_tot[icent]->ProjectionZ(Form("sig_Cent%d", icent), ptBinIdx_Low, ptBinIdx_High, lowEtaBin, highEtaBin);
         
         invMassVsCent_bg[icent]    = (TH1F*)h3InvMassXiYvsPt_bg[icent]->ProjectionZ(Form("bg_Cent%d", icent), ptBinIdx_Low, ptBinIdx_High, lowEtaBin, highEtaBin);
     }
-    /*
-    TCanvas *ca_Accep = new TCanvas("ca_Accep","tot. sig vs comb. bkg", 1200, 600);
-    ca_Accep->Divide(2,2);
-    
-    ca_Accep->cd(1)->SetGrid();
-    TH2F *hKstar0RapidityvsPt_sig = (TH2F*)hNumKstar0InvMassvsPtY_sig->Project3D("xy");
-    hKstar0RapidityvsPt_sig->Draw("COLZ");
-    hKstar0RapidityvsPt_sig->GetXaxis()->SetTitle("Rapidity (y_{C.M.})");
-    hKstar0RapidityvsPt_sig->GetYaxis()->SetTitle("p_{T} [GeV/c]");
-    hKstar0RapidityvsPt_sig->GetXaxis()->SetRangeUser(-1., 1.);
-    hKstar0RapidityvsPt_sig->GetYaxis()->SetRangeUser(0, 3.0);
-    
-    ca_Accep->cd(3);
-    TH1F *hInvMassAcceptance_sig = (TH1F*)hNumKstar0InvMassvsPtY_sig->ProjectionZ("invM_sig",9,60,1,10); //0.4<pT<3.0, -1.0<y<0
-    hInvMassAcceptance_sig->Draw("ESAME");
-    hInvMassAcceptance_sig->SetMarkerStyle(20);
-    hInvMassAcceptance_sig->SetMarkerSize(0.5);
-    hInvMassAcceptance_sig->SetMarkerColor(kBlack);
-    hInvMassAcceptance_sig->GetXaxis()->SetTitle("M_{inv} [GeV/c^{2}]");
-    hInvMassAcceptance_sig->GetYaxis()->SetTitle("Counts");
-    
-    ca_Accep->cd(2)->SetGrid();
-    TH3F *hNumKstar0InvMassvsPtY_bg = (TH3F*)pol_file->Get(Form("NumKstar0InvMassvsPtY_%s_Cent9",cutName.Data()));
-    TH2F *hKstar0RapidityvsPt_bg = (TH2F*)hNumKstar0InvMassvsPtY_bg->Project3D("xy");
-    hKstar0RapidityvsPt_bg->Draw("COLZ");
-    hKstar0RapidityvsPt_bg->GetXaxis()->SetTitle("Rapidity (y_{C.M.})");
-    hKstar0RapidityvsPt_bg->GetYaxis()->SetTitle("p_{T} [GeV/c]");
-    hKstar0RapidityvsPt_bg->GetXaxis()->SetRangeUser(-1., 1.);
-    hKstar0RapidityvsPt_bg->GetYaxis()->SetRangeUser(0, 3.0);
-    
-    ca_Accep->cd(4);
-    TH1F *hInvMassAcceptance_bg = (TH1F*)hNumKstar0InvMassvsPtY_bg->ProjectionZ("invM_bg",9,60,1,10); //0.4<pT<3.0, -1.0<y<0
-    hInvMassAcceptance_bg->Draw("ESAME");
-    hInvMassAcceptance_bg->SetMarkerStyle(20);
-    hInvMassAcceptance_bg->SetMarkerSize(0.5);
-    hInvMassAcceptance_bg->SetMarkerColor(kBlue);
-    hInvMassAcceptance_bg->GetXaxis()->SetTitle("M_{inv} [GeV/c^{2}]");
-    hInvMassAcceptance_bg->GetYaxis()->SetTitle("Counts");
-    
-    ca_Accep->cd();
-    ca_Accep->Print(Form("%s/Acceptance_%s_fxt3GeV.png", cutName.Data(), particle.Data()));
-    ca_Accep->Print(Form("%s/Acceptance_%s_fxt3GeV.pdf", cutName.Data(), particle.Data()));
-    */
     
     //plotting
     TF1 *f1_cent;
@@ -258,14 +217,14 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
     gPad->SetBottomMargin(0.1);
     gPad->SetLeftMargin(0.1);
     
-    double lowFitRange  = 0.75;
-    double highFitRange = 1.20;
+    double lowFitRange  = 0.6;
+    double highFitRange = 1.50;
     
     for(int icent=0; icent<nCent; icent++) {
         ca_invMass->cd(icent+1);
         
-        double nInclKstar0_r = invMassVsCent_tot[icent]->Integral(invMassVsCent_tot[icent]->FindBin(1.1), invMassVsCent_tot[icent]->FindBin(1.2));//1.2, 1.5
-        double nBgKstar0_r   = invMassVsCent_bg[icent]->Integral(invMassVsCent_bg[icent]->FindBin(1.1), invMassVsCent_bg[icent]->FindBin(1.2));//1.2, 1.5
+        double nInclKstar0_r = invMassVsCent_tot[icent]->Integral(invMassVsCent_tot[icent]->FindBin(1.2), invMassVsCent_tot[icent]->FindBin(1.5));//1.2, 1.5
+        double nBgKstar0_r   = invMassVsCent_bg[icent]->Integral(invMassVsCent_bg[icent]->FindBin(1.2), invMassVsCent_bg[icent]->FindBin(1.5));//1.2, 1.5
         double nInclKstar0_l = invMassVsCent_tot[icent]->Integral(invMassVsCent_tot[icent]->FindBin(0.6), invMassVsCent_tot[icent]->FindBin(0.8));
         double nBgKstar0_l   = invMassVsCent_bg[icent]->Integral(invMassVsCent_bg[icent]->FindBin(0.6), invMassVsCent_bg[icent]->FindBin(0.8));
         scaler[icent] = nInclKstar0_r / nBgKstar0_r;
@@ -286,7 +245,7 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
         invMassVsCent_tot[icent]->SetMarkerSize(0.5);
         invMassVsCent_tot[icent]->SetMarkerColor(kBlack);
         
-        invMassVsCent_bg[icent]->Draw("ESAME");
+//        invMassVsCent_bg[icent]->Draw("ESAME");
         invMassVsCent_bg[icent]->SetMarkerStyle(24);
         invMassVsCent_bg[icent]->SetMarkerSize(0.5);
         invMassVsCent_bg[icent]->SetMarkerColor(kBlue);
@@ -317,12 +276,12 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
         legT_t->SetTextFont(42);
         legT_t->SetTextSize(0.04);
         legT_t->AddEntry(invMassVsCent_tot[icent], "Same Event (SE)", "lep");
-        legT_t->AddEntry(invMassVsCent_bg[icent], "Mixed Event (ME)", "lep");
+//        legT_t->AddEntry(invMassVsCent_bg[icent], "Mixed Event (ME)", "lep");
         legT_t->Draw();
         
         ca_invMass->cd(icent+nCent+1);
         hKstar0Mass_sig[icent] = (TH1F*)invMassVsCent_tot[icent]->Clone();
-        hKstar0Mass_sig[icent]->Add(invMassVsCent_bg[icent], -1.0);
+//        hKstar0Mass_sig[icent]->Add(invMassVsCent_bg[icent], -1.0);
         
         float lowerEdgeY, upperEdgeY;
         float minCounts, minCountsErr;
@@ -359,19 +318,23 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
         hKstar0Mass_sig[icent]->SetMarkerColor(kRed);
         
         TLine *unitaty = new TLine(lowFitRange, 0., highFitRange, 0.);
-        unitaty->Draw();
+//        unitaty->Draw();
   
 	f1_cent = new TF1("f1_cent", fitFuncbw, lowFitRange, highFitRange, 6);      
 //        f1_cent = new TF1("f1_cent", fitFuncbwRel, lowFitRange, highFitRange, 6);//7); //order
         f1_cent->SetParNames("Scale1", "Width", "Mean","p0", "p1", "p2");//, "p3");
 //        f1_cent->SetParLimits(0, 0, 200000);
-        f1_cent->SetParLimits(1, 0.03, 0.07);
+//        f1_cent->SetParLimits(1, 0.03, 0.07);
 	f1_cent->SetParameter(2, 0.895);
+	f1_cent->FixParameter(3, 0);
+	f1_cent->FixParameter(4, 0);
+	f1_cent->FixParameter(5, 0);
 //        f1_cent->SetParLimits(2, 0.85, 0.93);
-        f1_cent->SetParLimits(2, 0.88, 0.90);
+//        f1_cent->SetParLimits(2, 0.88, 0.90);
         f1_cent->SetLineColor(kBlack);
         //f1_cent->SetNpx(hKstar0Mass_sig[i]->GetNbinsX());
         //f1_cent->SetNpx(45);   // 0.45/0.01 = 45
+	f1_cent->Draw("same");
         
         f2_bg = new TF1("f2_bg", background, lowFitRange, highFitRange, 3);//4); //order
         f2_bg->SetLineColor(kBlue);
@@ -390,14 +353,14 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
                 );
         hKstar0Mass_sig[icent]->Fit("f1_cent", "MO0", "", lowFitRange, highFitRange);
         
-        f1_cent->Draw("SAME");
+//        f1_cent->Draw("SAME");
 
         double *par;
         const double *parErr;
         par = f1_cent->GetParameters();
         parErr = f1_cent->GetParErrors();
         f2_bg->SetParameters(&par[3]);
-        f2_bg->Draw("SAME");
+//        f2_bg->Draw("SAME");
         
         f2_sig = new TF1("f2_sig", breitwigner, lowFitRange, highFitRange, 3); //order
 //        f2_sig = new TF1("f2_sig", relbreitwigner, lowFitRange, highFitRange, 3); //order
@@ -406,19 +369,19 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
         //f2_sig->SetNpx(hKstar0Mass_sig[i]->GetNbinsX());
         //f2_sig->SetNpx(45);
         f2_sig->SetParameters(&par[0]);
-        f2_sig->Draw("SAME");
+//        f2_sig->Draw("SAME");
         
         h1_cent_tot = (TH1F *)f1_cent->GetHistogram()->Clone();
         h1_cent_sig = (TH1F *)f1_cent->GetHistogram()->Clone();
         h1_cent_bkg = (TH1F *)f2_bg->GetHistogram()->Clone();
-        h1_cent_sig->Add(h1_cent_bkg, -1.0);
+//        h1_cent_sig->Add(h1_cent_bkg, -1.0);
         //h1_cent_sig->Draw("SAME");
         //h1_cent_sig->SetLineColor(kRed);
         
         hKstar0MassReal_sig[icent] = SubtractBGFn(hKstar0Mass_sig[icent], f2_bg, lowFitRange, highFitRange);
         hKstar0MassReal_sig[icent]->SetLineWidth(2.0);
         hKstar0MassReal_sig[icent]->SetLineColor(kRed);
-        hKstar0MassReal_sig[icent]->Draw("HIST SAME");
+//        hKstar0MassReal_sig[icent]->Draw("HIST SAME");
         
         int lowerMassBin_Kstar0 = h1_cent_tot->FindBin(par[2]-2.0*par[1]);
         int upperMassBin_Kstar0 = h1_cent_tot->FindBin(par[2]+2.0*par[1])-1;
@@ -430,19 +393,19 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
         lineMass[icent]->SetLineColor(kGreen);
         lineMass[icent]->SetLineStyle(2);
         lineMass[icent]->SetLineWidth(2);
-        lineMass[icent]->Draw("SAME");
+//        lineMass[icent]->Draw("SAME");
         
         lineL[icent] = new TLine(par[2]-2.0*par[1], lowerEdgeY, par[2]-2.0*par[1], upperEdgeY);
         lineL[icent]->SetLineColor(kBlack);
         lineL[icent]->SetLineStyle(2);
         lineL[icent]->SetLineWidth(2);
-        lineL[icent]->Draw("SAME");
+//        lineL[icent]->Draw("SAME");
         
         lineR[icent] = new TLine(par[2]+2.0*par[1],lowerEdgeY, par[2]+2.0*par[1], upperEdgeY);
         lineR[icent]->SetLineColor(kBlack);
         lineR[icent]->SetLineStyle(2);
         lineR[icent]->SetLineWidth(2);
-        lineR[icent]->Draw("SAME");
+//        lineR[icent]->Draw("SAME");
         
         float nSignal = hKstar0MassReal_sig[icent]->Integral(lowerMassBin_Kstar0, upperMassBin_Kstar0);
         float nTotal  = invMassVsCent_tot[icent]->Integral(lowerMassBin_Kstar0, upperMassBin_Kstar0);
@@ -490,7 +453,7 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
         legT1->AddEntry(f1_cent, "BW + pol2", "lp");
         legT1->AddEntry(f2_bg, "residual background", "lp");
         legT1->AddEntry(hKstar0MassReal_sig[icent], "K^{*0} signal", "l");
-        legT1->Draw();
+//        legT1->Draw();
     }
     
     ca_invMass->cd();

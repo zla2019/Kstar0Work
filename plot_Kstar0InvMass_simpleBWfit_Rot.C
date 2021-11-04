@@ -85,7 +85,7 @@ TH1F* SubtractBGFn( TH1F* hin, TF1* fbg, float xminFn, float xmaxFn ){
   return hout;
 }
 
-void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
+void plot_Kstar0InvMass_simpleBWfit_Rot(const bool isKstar0 = 1) {
     //EPD + TPC alignment along Z direction
     //    Inner      EPD       Outer                         TPC
     //-5.3 A -4.05 B -3.3 C -2.9 D -2.6         -2.0 A -1.1 eta-gap -1.0 B 0
@@ -98,22 +98,26 @@ void plot_Kstar0InvMass_simpleBWfit(const bool isKstar0 = 1) {
     gStyle->SetPadBottomMargin(0.18);
     gStyle->SetPadTopMargin(0.05);
     
-    TString cutName = "Mix";
+    TString cutName = "Rot";
     TString particle = "Kstar0";
     TString histName = "NumKstar0InvMassvsPtY";
     
     if(!isKstar0) { particle = "AntiKstar0"; histName = "NumAntiKstar0InvMassvsPtY"; }
     
+    //TFile *pol_file   = TFile::Open("kstar0_3gev_TPCorTOF_spinYmp5to0_flowYmp8to0_ana_hist.root");
+//    TFile *pol_file   = TFile::Open("kstar0_3gev_TPCandTOF_spinYmp5to0_flowYmp8to0_ana_hist.root");
+//    TFile *pol_file   = TFile::Open("19154032_5000010_kstar0Tree_TPCorTOF_hist_Aug12.root");
+//    TFile *pol_file   = TFile::Open("Kstar0_20210823_embedding.root");
+//    TFile *pol_file   = TFile::Open("../../KstarRealData_binning12.root");
+//    TFile *pol_file   = TFile::Open("../../Kstar0_mixkaon.root");
+//    TFile *pol_file   = TFile::Open("../../tar0Tree.root_TPCandTOF_hist_Aug12.root");
+//    TFile *pol_file   = TFile::Open("../../ReconstructionKstarInfo_v6.root");
+//    TFile *pol_file   = TFile::Open("../../KstarMCRecMassCheck.root");
+//    TFile *pol_file   = TFile::Open("../../tar0Tree.root_TPCandTOF_hist.root");
+//    TFile *pol_file   = TFile::Open("../../KstarMCRecMassCheck.root");
+//    TFile *pol_file   = TFile::Open("../../KstarRot.root");
 //    TFile *pol_file   = TFile::Open("/home/zla/tmp/19151031.root_TPCandTOF_hist.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/tmp/massCheck_rotation.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix20211013.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix_20211017.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix_20211024.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/data/TPCandTOF_hist_Mix.root");
-    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/embedding_data/embedding_Rec_20211101.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix_my_20211025.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/newMix_20211023_part1.root");
-//    TFile *pol_file   = TFile::Open("/home/zla/Kstar0Workdir/massCheck_rotation2.root");
+    TFile *pol_file   = TFile::Open("/home/zla/tmp/massCheck_rotation2.root");
 //    TFile *pol_file   = TFile::Open("../../Kstar0_realData_binning1_20210831.root");
 //    TFile *pol_file   = TFile::Open("../../KstarMassWidthCheck.root");
 //    TFile *pol_file   = TFile::Open("../../Kstar0_20210824_RealData_TPCandTOF.root");
